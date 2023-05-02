@@ -1,0 +1,142 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block "content" %}
+
+<div id="content" class="content">
+	<!-- begin breadcrumb -->
+	<ol class="breadcrumb pull-right">
+		<li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord</a></li>
+		<li><a href="{% url 'officineApp:liste' %}">Officines</a></li>
+		<li class="active">{{officine.name}}</li>
+	</ol>
+	<!-- end breadcrumb -->
+	<!-- begin page-header -->
+	<h1 class="page-header"><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 30px; margin-top: -5px"> {{officine.name}} <small>{{officine.localisation}}</small></h1>
+	<!-- end page-header -->
+	<!-- begin profile-container -->
+	<div class="profile-container">
+		<!-- begin profile-section -->
+		<div class="profile-section">
+			<!-- begin profile-left -->
+			<div class="profile-left">
+				<!-- begin profile-image -->
+				<div class="profile-image">
+					<img src="assets/img/profile-cover.jpg" />
+					<i class="fa fa-user hide"></i>
+				</div>
+				<!-- end profile-image -->
+				<div class="m-b-10">
+					<a href="#" class="btn btn-warning btn-block btn-sm">Changer les photos</a>
+				</div>
+				<!-- begin profile-highlight -->
+				{% comment %} <div class="profile-highlight">
+					<h4><i class="fa fa-cog"></i> Only My Contacts</h4>
+					<div class="checkbox m-b-5 m-t-0">
+						<label><input type="checkbox" /> Show my timezone</label>
+					</div>
+					<div class="checkbox m-b-0">
+						<label><input type="checkbox" /> Show i have 14 contacts</label>
+					</div>
+				</div> {% endcomment %}
+				<!-- end profile-highlight -->
+			</div>
+			<!-- end profile-left -->
+			<!-- begin profile-right -->
+			<div class="profile-right">
+				<!-- begin profile-info -->
+				<div class="profile-info">
+					<!-- begin table -->
+					<div class="table-responsive">
+						<div class="row">
+							<div class="col-sm-6">
+								<table class="table table-profile">
+									
+									<tbody>
+										<tr class="highlight">
+											<td class="field">Circonscription</td>
+											<td><a href="#">{{officine.circonscription}}</a></td>
+										</tr>
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+										<tr>
+											<td class="field">Localisation</td>
+											<td>{{officine.localisation}}</td>
+										</tr>
+										<tr>
+											<td class="field">Contact 1</td>
+											<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{officine.contact}}</td>
+										</tr>
+										<tr>
+											<td class="field">Contact 2</td>
+											<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{officine.contact2}}</td>
+										</tr>
+									
+										
+										
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+										<tr class="highlight">
+											<td class="field">Coordonnées</td>
+											<td><a href="#">{{officine.coordinates}}</a></td>
+										</tr>
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+									</tbody>
+								</table>
+
+								<table class="table table-">
+									<thead>
+										<tr>
+											<th colspan="2">
+												<h4> Micheal Meyer <small>Lorraine Stokes</small></h4>
+											</th>
+										</tr>
+									</thead>
+									<tbody class="text-left">
+										<tr>
+											<td class="field"></td>
+											<td><a href="#" class="btn btn-warning btn-block btn-sm">Modifier les informations</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="col-sm-6" style="height:500px; border: solid 1px red">
+								<div class="map-min" style="">
+									<div id="google-map-default" style="height:490px"></div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					<!-- end table -->
+				</div>
+				<!-- end profile-info -->
+			</div>
+			<!-- end profile-right -->
+		</div>
+		<!-- end profile-section -->
+	</div>
+	<!-- end profile-container -->
+</div>
+
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+MapGoogle.init();
+{% endblock "scriptjs" %}
+
+<style>
+	.map-min{
+		position:absolute;
+		top:5px !important;
+		bottom:5px;
+		left:0px !important;
+		right:0 !important;
+		z-index:0
+	}
+</style>

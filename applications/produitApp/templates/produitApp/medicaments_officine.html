@@ -1,0 +1,72 @@
+
+{% extends 'layout/base.html' %}
+
+{% block "content" %}
+<div id="content" class="content">
+    <!-- begin breadcrumb -->
+    <ol class="breadcrumb pull-right">
+        <li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord </a></li>
+        <li class="active">Médicaments</li>
+    </ol>
+    <!-- end breadcrumb -->
+    <!-- begin page-header -->
+    <h1 class="page-header">Liste des Médicaments </h1>
+    <!-- end page-header -->
+    
+    <div id="options" class="m-b-10">
+        <span class="gallery-option-set" id="filter" data-option-key="filter">
+            <a href="#show-all" class="btn btn-default btn-xs active" data-option-value="*">
+                Tous voir
+            </a>
+            {% for type in types %}
+            <a href="#{{type.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{type.etiquette}}">
+                {{type.name}}
+            </a>
+            {% endfor %}
+            <a href="#ordonnance" class="btn btn-default btn-xs" data-option-value=".ordonnance">
+                Sur ordonnance
+            </a>
+            {% for stock in stocks %}
+            <a href="#{{stock.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{stock.etiquette}}">
+                {{stock.name}}
+            </a>
+            {% endfor %}
+        </span>
+    </div>
+    <div id="gallery" class="gallery">
+
+        {% for item in prodoffs %}
+        <div class="image {{item.medicament.type.etiquette}} {% if item.medicament.only_ordonnance %}ordonnance{% endif %} ">
+            <div class="image-inner">
+                <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                    <img src="assets/img/gallery/gallery-1.jpg" alt="" />
+                </a>
+                <p class="image-caption">
+                    #{{item.medicament.codebarre}}
+                </p>
+            </div>
+            <div class="image-info">
+                <h5 class="title">{{item.medicament.name}}</h5>
+                <div class="pull-right">
+                    {% if item.medicament.only_ordonnance %}
+                    <label class="label label-primary">Sur ordonnance</label>
+                    {% endif %}
+                </div>
+                <div class="rating">
+                    <label class="label label-success">{{item.stock_state}}</label>
+                </div>
+                <div class="desc">{{item.medicament.description}}</div>
+            </div>
+        </div>
+        {% endfor %}
+
+        
+     
+    </div>
+</div>
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+Gallery.init();
+{% endblock "scriptjs" %}

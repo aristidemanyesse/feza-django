@@ -14,8 +14,16 @@ from datetime import datetime, timedelta
 #         return HttpResponseRedirect(reverse('fixtureApp:fixtures', args=[date.year, date.month, date.day]))
         
 
-@render_to('mainApp/login.html')
+@render_to('mainApp/dashboard.html')
 def dashboard(request):
+    if request.method == "GET":
+        ctx = {}
+        return ctx
+        
+        
+
+@render_to('mainApp/login.html')
+def login(request):
     if request.method == "GET":
         ctx = {}
         return ctx

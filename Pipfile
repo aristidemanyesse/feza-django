@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 django = "*"
 django-annoying = "*"
+pillow = "*"
+django-leaflet = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

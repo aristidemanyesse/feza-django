@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.gis",
     "coreApp",
+    "produitApp",
+    "officineApp",
+    "UserApp",
     "mainApp"
 ]
 
@@ -77,10 +81,18 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+    'default-sqlite': {
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+    'default': {
+        'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
+        'PORT'      : os.getenv("DB_PORT", 3306),
+        'USER'      : os.getenv("DB_USER", "root"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+        'NAME'      : os.getenv("DB_NAME", "feza"),
+    },
 }
 
 

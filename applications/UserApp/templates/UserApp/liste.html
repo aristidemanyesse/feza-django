@@ -1,0 +1,71 @@
+
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block "content" %}
+	<!-- begin #content -->
+    <div id="content" class="content">
+        <!-- begin breadcrumb -->
+        <ol class="breadcrumb pull-right">
+            <li><a href="javascript:;">Utilisateurs</a></li>
+            <li class="active">liste</li>
+        </ol>
+        <!-- end breadcrumb -->
+        <!-- begin page-header -->
+        <h1 class="page-header">Liste des utilisateurs <small>par ordre alphabétique</small></h1>
+        <!-- end page-header -->
+        
+        <!-- begin row -->
+        <div class="row">
+            <!-- begin col-12 -->
+            <div class="col-md-12">
+                <!-- begin panel -->
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            
+                        </div>
+                        <h4 class="panel-title">Utilisateurs - Liste</h4>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nom complet</th>
+                                    <th>Circonscription actuelle</th>
+                                    <th>Contact</th>
+                                    <th>Téléphone</th>
+                                    <th>Valide</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for utilisateur in utilisateurs %}
+                                    <tr class="odd gradeX">
+                                        <td><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 20px"></td>
+                                        <td class="text-bold">{{ utilisateur.fullname }}</td>
+                                        <td>{{ utilisateur.circonscription }}</td>
+                                        <td>{{ utilisateur.contact }}</td>
+                                        <td>{{ utilisateur.telephone }}</td>
+                                        <td>{{ utilisateur.is_valide }}</td>
+                                        <td><a href="{% url 'UserApp:utilisateur' utilisateur.id %}" class="btn btn-white btn-xs btn-rounded"><i class="fa fa-eye"></i> Voir</a></td>
+                                    </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end panel -->
+            </div>
+            <!-- end col-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end #content -->
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+TableManageDefault.init();
+{% endblock "scriptjs" %}

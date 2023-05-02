@@ -1,0 +1,49 @@
+{% extends 'layout/base.html' %}
+
+
+{% block "content" %}
+
+<div id="content" class="content content-full-width content-inverse-mode">
+	<!-- begin breadcrumb -->
+	<ol class="breadcrumb pull-right">
+		<li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord</a></li>
+		<li><a href="{% url 'officineApp:liste' %}">Officines</a></li>
+		<li class="active">Cartographies des officines</li>
+	</ol>
+	<!-- end breadcrumb -->
+	<!-- begin page-header -->
+	<h1 class="page-header">Cartographies de officines </h1>
+	<!-- end page-header -->
+	
+	<div class="map">
+		<div id="google-map-default" style="height:100%"></div>
+	</div>
+	<div class="map-float-table width-sm hidden-xs p-15">
+		<h4 class="m-t-0"><i class="fa fa-map-marker text-danger m-r-5"></i> Circonscriptions</h4>
+		<div data-scrollbar="true" class="height-md">
+			<table class="table table-inverse">
+				<thead>
+					<tr>
+						<th>Nom</th>
+						<th>Total officines</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for circonscription in circonscriptions %}
+					<tr>
+						<td>{{circonscription.name}}</td>
+						<td>{{circonscription.circonscription_officine.filter.count}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+MapGoogle.init();
+{% endblock "scriptjs" %}

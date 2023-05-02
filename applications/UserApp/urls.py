@@ -4,12 +4,11 @@ from django.urls import path
 
 from . import views
 
-app_name = "mainApp"
+app_name = "UserApp"
 urlpatterns = [
-    path('', views.dashboard, name="dashboard"),
-    path('dashboard', views.dashboard, name="dashboard"),
-    path('login', views.login, name="login"),
+    path('liste/', views.liste, name="liste"),
+    path('map/', views.map, name="map"),
     # path('fixtures/test/', views.features_test, name="features_test"),
     # path('fixtures/<int:year>/<int:month>/<int:day>/', views.fixtures, name="fixtures"),
-    # path('match/<uuid:id>/', views.match, name="match"),
+    path('utilisateur/<uuid:id>/', views.utilisateur, name="utilisateur"),
 ]

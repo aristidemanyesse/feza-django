@@ -4,12 +4,12 @@ from django.urls import path
 
 from . import views
 
-app_name = "mainApp"
+app_name = "officineApp"
 urlpatterns = [
-    path('', views.dashboard, name="dashboard"),
-    path('dashboard', views.dashboard, name="dashboard"),
-    path('login', views.login, name="login"),
+    path('', views.liste, name="liste"),
+    path('map/', views.map, name="map"),
+    path('responsables/', views.responsables, name="responsables"),
     # path('fixtures/test/', views.features_test, name="features_test"),
     # path('fixtures/<int:year>/<int:month>/<int:day>/', views.fixtures, name="fixtures"),
-    # path('match/<uuid:id>/', views.match, name="match"),
+    path('officine/<uuid:id>/', views.officine, name="officine"),
 ]

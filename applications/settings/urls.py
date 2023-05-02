@@ -31,7 +31,9 @@ from django.conf.urls.static import static
 # urlpatterns = i18n_patterns(
 urlpatterns = [
     path('', include('mainApp.urls')),
-    path('pays/', include('mainApp.urls')),
+    path('officines/', include('officineApp.urls')),
+    path('utilisateurs/', include('UserApp.urls')),
+    path('produits/', include('produitApp.urls')),
     path('admin/', admin.site.urls),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
