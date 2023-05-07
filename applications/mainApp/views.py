@@ -2,34 +2,65 @@ from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404
 from annoying.decorators import render_to
 from django.http import HttpResponseRedirect
+import json
+from django.core.serializers import serialize
+from django.contrib.auth import authenticate, logout
+
+from officineApp.models import Officine
+from produitApp.models import *
+from UserApp.models import *
 from .models import *
 from datetime import datetime, timedelta
 # Create your views here.
 
 
-# @render_to('fixtureApp/index.html')
-# def home(request):
-#     if request.method == "GET":
-#         date = datetime.now()
-#         return HttpResponseRedirect(reverse('fixtureApp:fixtures', args=[date.year, date.month, date.day]))
-        
 
-@render_to('mainApp/dashboard.html')
-def dashboard(request):
-    if request.method == "GET":
-        ctx = {}
-        return ctx
-        
         
 
 @render_to('mainApp/login.html')
-def login(request):
+def connexion(request):
     if request.method == "GET":
-        ctx = {}
-        return ctx
+        logout(request)
+        if 'locked' in request.session:
+            del request.session['locked']
+            
+        return {}
         
         
 
+@render_to('mainApp/locked.html')
+def locked(request):
+    if request.method == "GET":
+        request.session['locked'] = True
+        if "last_url" not in request.session:
+            request.session['last_url'] = request.META["HTTP_REFERER"]
+        return render(request, "auth/pages/locked.html")
+        
+
+
+def deconnexion(request):
+    if request.method == "GET":
+        return redirect("mainApp:login") 
+        
+        
+        
+@render_to('mainApp/dashboard.html')
+def dashboard(request):
+    if request.method == "GET":
+        officines = Officine.objects.filter(deleted = False)
+        produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
+        users = Utilisateur.objects.filter(deleted = False)
+        markers = json.loads(serialize("geojson", officines))
+        ctx = {
+            "officines": officines,
+            "produits": produits,
+            "users": users,
+            "markers": markers
+        }
+        return ctx
+        
+        
+        
 # @render_to('fixtureApp/match.html')
 # def match(request, id):
 #     if request.method == "GET":

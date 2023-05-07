@@ -13,60 +13,77 @@
     <h1 class="page-header">Liste des Médicaments </h1>
     <!-- end page-header -->
     
-    <div id="options" class="m-b-10">
-        <span class="gallery-option-set" id="filter" data-option-key="filter">
-            <a href="#show-all" class="btn btn-default btn-xs active" data-option-value="*">
-                Tous voir
-            </a>
-            {% for type in types %}
-            <a href="#{{type.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{type.etiquette}}">
-                {{type.name}}
-            </a>
-            {% endfor %}
-            <a href="#ordonnance" class="btn btn-default btn-xs" data-option-value=".ordonnance">
-                Sur ordonnance
-            </a>
-            {% for stock in stocks %}
-            <a href="#{{stock.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{stock.etiquette}}">
-                {{stock.name}}
-            </a>
-            {% endfor %}
-        </span>
+    <div class="row">
+        <div id="options" class="col-sm-10 m-b-10">
+            <span class="gallery-option-set" id="filter" data-option-key="filter">
+                <a href="#show-all" class="btn btn-default btn-xs active" data-option-value="*">
+                    Tous voir
+                </a>
+                {% for type in types %}
+                <a href="#{{type.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{type.etiquette}}">
+                    {{type.name}}
+                </a>
+                {% endfor %}
+                <a href="#ordonnance" class="btn btn-default btn-xs" data-option-value=".ordonnance">
+                    Sur ordonnance
+                </a>
+                {% for stock in stocks %}
+                <a href="#{{stock.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{stock.etiquette}}">
+                    {{stock.name}}
+                </a>
+                {% endfor %}
+            </span>
+        </div>
+        <div class="col-sm-2 text-right">
+            {% comment %} <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-medicament"><i class="fa fa-plus"></i> Ajouter</button> {% endcomment %}
+        </div>
     </div>
     <div id="gallery" class="gallery">
-
         {% for item in prodoffs %}
-        <div class="image {{item.medicament.type.etiquette}} {% if item.medicament.only_ordonnance %}ordonnance{% endif %} ">
+        <div class="image {{item.produit.type.etiquette}} {{item.stock_state.etiquette}} {% if item.produit.only_ordonnance %}ordonnance{% endif %} ">
             <div class="image-inner">
-                <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                    <img src="assets/img/gallery/gallery-1.jpg" alt="" />
-                </a>
+                <img src="{{item.produit.image.url}}" alt="" />
                 <p class="image-caption">
-                    #{{item.medicament.codebarre}}
+                    #{{item.produit.codebarre}}
                 </p>
             </div>
             <div class="image-info">
-                <h5 class="title">{{item.medicament.name}}</h5>
-                <div class="pull-right">
-                    {% if item.medicament.only_ordonnance %}
-                    <label class="label label-primary">Sur ordonnance</label>
-                    {% endif %}
+                <h4 class="title">{{item.produit.name}}</h4>
+                <div>
+                    <div class="pull-right">
+                        {% if item.produit.only_ordonnance %}
+                        <label class="label label-primary">Sur ordonnance</label>
+                        {% endif %}
+                    </div>
+                    <div class="rating pull-left">
+                        <div class="btn-group ">
+                            <a class="btn btn-{{item.stock_state.classe}} btn-xs">{{item.stock_state}}</a>
+                            <button type="button" class="btn btn-{{item.stock_state.classe}} btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                {% for state in stocks %}
+                                    {% if state.etiquette != item.stock_state.etiquette %}
+                                        <li id="{{state.etiquette}}"><a href="#">{{state.name}}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="rating">
-                    <label class="label label-success">{{item.stock_state}}</label>
-                </div>
-                <div class="desc">{{item.medicament.description}}</div>
+                <div class="clearfix"></div><br>
+                <div class="desc">{{item.produit.description}}</div>
             </div>
         </div>
         {% endfor %}
-
-        
-     
     </div>
 </div>
+
 {% endblock "content" %}
 
 
 {% block "scriptjs" %}
-Gallery.init();
+<script>
+    Gallery.init();
+</script>
 {% endblock "scriptjs" %}

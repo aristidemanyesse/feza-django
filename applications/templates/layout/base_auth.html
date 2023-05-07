@@ -1,0 +1,38 @@
+{% load static %}
+<html lang="en">
+<!--<![endif]-->
+{% include "./partials/meta.html" %}
+
+<body class="pace-top">
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+	
+	<div class="login-cover">
+	    <div class="login-cover-image"><img src="{% static 'dist/img/login-bg/bg-1.jpg' %}" data-id="login-cover-image" alt="" /></div>
+	    <div class="login-cover-bg"></div>
+	</div>
+	<!-- begin #page-container -->
+	{% block "content" %}
+    
+    {% endblock "content" %}
+	<!-- end page container -->
+	
+	{% include "./partials/import_js.html" %}
+
+	<script>
+		$(document).ready(function() {
+			App.init();
+            LoginV2.init();
+		});
+	</script>
+
+
+    {% block "script" %}
+    
+    {% endblock "script" %}
+
+
+	{% include "./partials/loader.html" %}
+</body>
+</html>

@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from annoying.decorators import render_to
 from officineApp.models import *
-
+import json
+from django.core.serializers import serialize
 # Create your views here.
 
 
@@ -22,8 +23,19 @@ def liste(request):
 def map(request):
     if request.method == "GET":
         circonscriptions = Circonscription.objects.filter(deleted = False)
+        datas  = []
+        for cir in circonscriptions:
+            item = {}
+            item["id"] = cir.id
+            item["name"] = cir.name
+            item["officines"] = json.loads(serialize("geojson", Officine.objects.filter(deleted = False, circonscription=cir))) 
+            datas.append(item)
+        
+        officines = Officine.objects.filter(deleted = False)
         ctx = {
-            "circonscriptions" : circonscriptions
+            "circonscriptions" : circonscriptions,
+            "officines" : officines,
+            "datas" : datas,
         }
         return ctx
         

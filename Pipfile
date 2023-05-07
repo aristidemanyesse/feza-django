@@ -9,6 +9,9 @@ django-annoying = "*"
 pillow = "*"
 django-leaflet = "*"
 mysqlclient = "*"
+graphene-django-extras = "*"
+python-dateutil = "*"
+graphene-django = "*"
 
 [dev-packages]
 

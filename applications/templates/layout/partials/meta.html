@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load leaflet_tags %}
 
 <head>
 	<meta charset="utf-8" />
@@ -19,6 +19,10 @@
 	<link href="{% static 'dist/css/theme/default.css' %}" rel="stylesheet" id="theme" />
 
 
+
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet/dist/leaflet.css" crossorigin=""/>
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" crossorigin=""/>
+
 	<!-- ================== END BASE CSS STYLE ================== -->
 	
 	<!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
@@ -30,9 +34,25 @@
 
 	<link href="{% static 'dist/plugins/isotope/isotope.css' %}" rel="stylesheet" />
 	<link href="{% static 'dist/plugins/lightbox/css/lightbox.css' %}" rel="stylesheet" />
+	<link href="{% static 'dist/plugins/toastr/toastr.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'dist/plugins/select2/dist/css/select2.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'dist/plugins/alerty/dist/css/alerty.min.css' %}" rel="stylesheet">
+
+
+
+	<link href="{% static 'dist/shamman/shamman.css' %}" rel="stylesheet" />
 	<!-- ================== END PAGE LEVEL STYLE ================== -->
 	
 	<!-- ================== BEGIN BASE JS ================== -->
 	<script src="{% static 'dist/plugins/pace/pace.min.js' %}"></script>
 	<!-- ================== END BASE JS ================== -->
+
 </head>
+
+
+
+<style>
+	.bold{
+		text-weight: bold;
+	}
+</style>

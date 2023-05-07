@@ -10,45 +10,42 @@
                     <a href="javascript:;"><img src="{% static 'dist/img/user-13.jpg' %}" alt="" /></a>
                 </div>
                 <div class="info">
-                    Jocelyn Angbo
+                    {{request.respo.first_name}} {{request.respo.last_name}}
                     <small>Responsable</small>
                 </div>
             </li>
         </ul>
         <!-- end sidebar user -->
         <!-- begin sidebar nav -->
+
         <ul class="nav">
-            <li class="nav-header">Pharmarcie des plages </li>
             <li><a href="{% url 'mainApp:dashboard' %}"><i class="fa fa-windows"></i> <span>Tableau de Bord</span></a></li>
-            <li class="has-sub active">
+            <li class="has-sub " module="mainApp">
                 <a href="javascript:;">
                     <b class="caret pull-right"></b>
                     <i class="fa fa-users"></i>
                     <span>Utilisateurs</span>
                 </a>
                 <ul class="sub-menu">
-                    <li class="active"><a href="{% url 'UserApp:liste' %}">Voir la liste</a></li>
-                    <li><a href="{% url 'UserApp:map' %}">cartographie</a></li>
+                    <li class="" page="liste"><a href="{% url 'UserApp:liste' %}">Voir la liste</a></li>
+                    <li page="map"><a href="{% url 'UserApp:map' %}">cartographie</a></li>
                 </ul>
             </li>
-            <li class="has-sub active">
+            <li class="has-sub " module="officineApp">
                 <a href="javascript:;">
                     <b class="caret pull-right"></b>
                     <i class="fa fa-university"></i>
                     <span>Officines</span>
                 </a>
                 <ul class="sub-menu">
-                    <li class="active"><a href="{% url 'officineApp:liste' %}">Voir la liste</a></li>
-                    <li><a href="{% url 'officineApp:map' %}">cartographie</a></li>
+                    <li class="" page="liste"><a href="{% url 'officineApp:liste' %}">Voir la liste</a></li>
+                    <li page="map"><a href="{% url 'officineApp:map' %}">cartographie</a></li>
                 </ul>
             </li>
-            <li><a href="{% url 'produitApp:medicaments' %}"><i class="fa fa-cubes"></i> <span>Médicaments</span></a></li>
-            <li><a href="{% url 'produitApp:medicaments_officine' %}"><i class="fa fa-cubes"></i> <span>Nos Médicaments</span></a></li>
+            <li page="medicaments"><a href="{% url 'produitApp:medicaments' %}"><i class="fa fa-cubes"></i> <span>Médicaments</span></a></li>
             {% comment %} <li><a href="{% url 'produitApp:medicaments'  %}"><i class="fa fa-calendar"></i> <span>Assurances</span></a></li> {% endcomment %}
-            <li><a href="{% url 'produitApp:medicaments' %}"><i class="fa fa-cogs"></i> <span>Paramètres</span></a></li>
+            <li page="parametres"><a href="{% url 'produitApp:medicaments' %}"><i class="fa fa-cogs"></i> <span>Paramètres</span></a></li>
 
-            
-        
             <!-- begin sidebar minify button -->
             <li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>
             <!-- end sidebar minify button -->

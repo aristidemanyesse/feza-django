@@ -1,6 +1,5 @@
 {% extends 'layout/base.html' %}
-
-
+{% load static %}
 {% block "content" %}
 
 <div id="content" class="content content-full-width content-inverse-mode">
@@ -16,7 +15,11 @@
 	<!-- end page-header -->
 	
 	<div class="map">
-		<div id="google-map-default" style="height:100%"></div>
+		
+		<div style="height:100%">
+			{{ datas|json_script:"cirs-data" }}	
+            <div id="mymap"></div>
+		</div>
 	</div>
 	<div class="map-float-table width-sm hidden-xs p-15">
 		<h4 class="m-t-0"><i class="fa fa-map-marker text-danger m-r-5"></i> Circonscriptions</h4>
@@ -30,7 +33,7 @@
 				</thead>
 				<tbody>
 					{% for circonscription in circonscriptions %}
-					<tr>
+					<tr class="circonscription" style="cursor:pointer;" id="{{circonscription.id}}">
 						<td>{{circonscription.name}}</td>
 						<td>{{circonscription.circonscription_officine.filter.count}}</td>
 					</tr>
@@ -45,5 +48,79 @@
 
 
 {% block "scriptjs" %}
-MapGoogle.init();
+	<script>
+		$(document).ready(function() {
+			var mymap = L.map('mymap').setView([7.561891, -5.376317], 8);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				maxZoom: 22,
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(mymap);
+		
+			var customIcon = L.icon({
+				iconUrl: "{% static 'dist/img/icons/pharmacy.png' %}",
+				iconSize: [24, 24],
+				iconAnchor: [16, 16],
+				popupAnchor: [0, -16]
+			});
+		
+		
+		
+			var layers = {}
+			const cirs = JSON.parse(document.getElementById("cirs-data").textContent)
+			console.log(cirs)
+			for (let zone of cirs) {
+				var markersLayer = L.markerClusterGroup();
+				for (var item of zone["officines"]["features"]) {
+					console.log(item)
+					var marker = L.geoJSON(item, {
+						pointToLayer: function (feature, latlng) {
+						return L.marker(latlng, { icon: customIcon });
+						},
+					}).addTo(mymap);
+					var popupContent = '<div style="padding: 1em;">' +
+						'<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
+						'<p style="margin: 0;">Contenu du popup</p>' +
+						'</div>';
+					marker.bindPopup(popupContent);
+					markersLayer.addLayer(marker);
+				}
+				layers[zone["id"]] = markersLayer;
+			}
+		
+			for (let key in layers){
+				var layer = layers[key];
+				layer.addTo(mymap);
+			}
+		
+			function zoomCluster(id){
+				alert(id);
+			}
+		
+			$("tr.circonscription").click(function() {
+				//on desactive les bounces
+				for (let key in layers){
+					var layer = layers[key];
+					layer.eachLayer(function(marker) {
+						marker.stopBouncing();
+					});
+				}
+				//on active les selectionnées
+				let id = $(this).attr("id");
+				var layer = layers[id];
+				layer.eachLayer(function(marker) {
+					marker.bounce();
+				});
+			  });
+		});
+	</script>
 {% endblock "scriptjs" %}
+
+
+
+{% block "style" %}
+	#mymap {
+		height: 100% !important;
+	}
+{% endblock "style" %}

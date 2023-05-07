@@ -1,5 +1,4 @@
-from django.contrib import admin
-from leaflet.admin import LeafletGeoAdminMixin
+from django.contrib.gis import admin
 
 # Register your models here.
 from .models import*
@@ -16,7 +15,7 @@ class TypeOfficineAdmin(admin.ModelAdmin):
 
 
 @admin.register(Circonscription)
-class CirconscriptionAdmin(admin.ModelAdmin, LeafletGeoAdminMixin):
+class CirconscriptionAdmin(admin.GISModelAdmin):
     empty_value_display = '-'
     list_filter = (
         ('created_at', DateFieldListFilter),
@@ -25,7 +24,7 @@ class CirconscriptionAdmin(admin.ModelAdmin, LeafletGeoAdminMixin):
 
 
 @admin.register(Officine)
-class OfficineAdmin(admin.ModelAdmin, LeafletGeoAdminMixin):
+class OfficineAdmin(admin.GISModelAdmin):
     empty_value_display = '-'
     date_hierarchy = 'created_at'
     list_filter = (

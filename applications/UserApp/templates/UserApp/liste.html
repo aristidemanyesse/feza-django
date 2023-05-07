@@ -34,7 +34,6 @@
                                     <th>Nom complet</th>
                                     <th>Circonscription actuelle</th>
                                     <th>Contact</th>
-                                    <th>Téléphone</th>
                                     <th>Valide</th>
                                     <th></th>
                                 </tr>
@@ -42,12 +41,11 @@
                             <tbody>
                                 {% for utilisateur in utilisateurs %}
                                     <tr class="odd gradeX">
-                                        <td><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 20px"></td>
+                                        <td><img src="{{ utilisateur.image.url }}" style="width: 25px"></td>
                                         <td class="text-bold">{{ utilisateur.fullname }}</td>
                                         <td>{{ utilisateur.circonscription }}</td>
                                         <td>{{ utilisateur.contact }}</td>
-                                        <td>{{ utilisateur.telephone }}</td>
-                                        <td>{{ utilisateur.is_valide }}</td>
+                                        <td>{% if utilisateur.is_valide %} <i class="fa fa-check"></i>{% else %} en attente {% endif %}</td>
                                         <td><a href="{% url 'UserApp:utilisateur' utilisateur.id %}" class="btn btn-white btn-xs btn-rounded"><i class="fa fa-eye"></i> Voir</a></td>
                                     </tr>
                                 {% endfor %}

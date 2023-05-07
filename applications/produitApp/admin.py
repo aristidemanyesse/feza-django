@@ -20,7 +20,8 @@ class StockStateAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['name', "etiquette"]
+    list_display = ["id", 'name', "etiquette", "classe"]
+    list_editable = ['name', "etiquette", "classe"]
 
 
 @admin.register(Produit)
@@ -30,8 +31,8 @@ class ProduitAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = [ 'name', "type", "codebarre", 'only_ordonnance']
-    list_editable = ["type", "codebarre", 'only_ordonnance']
+    list_display = [ 'name', "type", "codebarre", 'only_ordonnance', "image"]
+    list_editable = ["type", "codebarre", 'only_ordonnance', "image"]
 
 
 

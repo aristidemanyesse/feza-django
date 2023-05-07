@@ -5,54 +5,58 @@
 <!--[if !IE]><!-->
 <html lang="en">
 <!--<![endif]-->
-{% include "./partials/meta.html" %}
+	{% include "./partials/meta.html" %}
 
-<body>
-	<!-- begin #page-loader -->
-	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
-	<!-- end #page-loader -->
-	
-	<!-- begin #page-container -->
-	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
-		<!-- begin #header -->
-		{% include "./partials/header.html" %}
-		<!-- end #header -->
+	<body>
+		<!-- begin #page-loader -->
+		<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+		<!-- end #page-loader -->
 		
-		<!-- begin #menu -->
-		{% include "./partials/menu.html" %}
-		<!-- end #menu -->
+		<!-- begin #page-container -->
+		<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+			<!-- begin #header -->
+			{% include "./partials/header.html" %}
+			<!-- end #header -->
+			
+			<!-- begin #menu -->
+			{% include request.menu %}
+			<!-- end #menu -->
+			
+			<!-- begin #content -->
+			{% block "content" %}
+			hello world   ! ldfdogiodg  gdfkgjnjkfdnjgndf
+			<br> dkgd
+			{% endblock "content" %}
+			<!-- end #content -->
+			
+			{% include "./partials/sidebar.html" %}
+			
+			<!-- begin scroll to top btn -->
+			<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+			<!-- end scroll to top btn -->
+		</div>
+		<!-- end page container -->
 		
-		<!-- begin #content -->
-		{% block "content" %}
-		hello world   ! ldfdogiodg  gdfkgjnjkfdnjgndf
-		<br> dkgd
-		{% endblock "content" %}
-		<!-- end #content -->
+	{% include "./partials/import_js.html" %}
 		
-        {% include "./partials/sidebar.html" %}
-		
-		<!-- begin scroll to top btn -->
-		<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
-		<!-- end scroll to top btn -->
-	</div>
-	<!-- end page container -->
-	
-{% include "./partials/import_js.html" %}
-	
 	<script>
 		$(document).ready(function() {
 			App.init();
-			{% block "scriptjs" %}{% endblock "scriptjs" %}
 		});
-
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		  
-			ga('create', 'UA-53034621-1', 'auto');
-			ga('send', 'pageview');
-		  
 	</script>
+
+	{% block "scriptjs" %}
+	
+	{% endblock "scriptjs" %}
+
+
+	<style>
+		{% block "style" %}
+		
+		{% endblock "style" %}
+	</style>
+
+	{% include "./partials/loader.html" %}
+
 </body>
 </html>

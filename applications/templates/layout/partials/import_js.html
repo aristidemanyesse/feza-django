@@ -1,8 +1,9 @@
 	{% load static %}
     
     <!-- ================== BEGIN BASE JS ================== -->
-	<script src="{% static 'dist/plugins/jquery/jquery-1.9.1.min.js' %}"></script>
-	<script src="{% static 'dist/plugins/jquery/jquery-migrate-1.1.0.min.js' %}"></script>
+	<script src="{% static 'dist/plugins/jquery/jquery-3.3.1.min.js' %}"></script>
+	{% comment %} <script src="{% static 'dist/plugins/jquery/jquery-1.9.1.min.js' %}"></script> {% endcomment %}
+	<script src="{% static 'dist/plugins/jquery/jquery-migrate-1.4.1.min.js' %}"></script>
 	<script src="{% static 'dist/plugins/jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
 	<script src="{% static 'dist/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
 
@@ -46,7 +47,24 @@
     <script src="{% static 'dist/plugins/morris/morris.js' %}"></script>
     <script src="{% static 'dist/plugins/bootstrap-calendar/js/bootstrap_calendar.min.js' %}"></script>
 	<script src="{% static 'dist/plugins/gritter/js/jquery.gritter.js' %}"></script>
+	<script src="{% static 'dist/plugins/toastr/toastr.min.js' %}"></script>
+	<script src="{% static 'dist/plugins/select2/dist/js/select2.min.js' %}"></script>
+    <script src="{% static 'dist/plugins/alerty/alerty.min.js' %}"></script>
+
+
+	<script src="{% static 'dist/js/login-v2.demo.min.js' %}"></script>
+
+	<script src="{% static 'dist/shamman/functions.js' %}"></script>
+	<script src="{% static 'dist/shamman/alerter.js' %}"></script>
+	<script src="{% static 'dist/shamman/loader.js' %}"></script>
+	<script src="{% static 'dist/shamman/traitement.js' %}"></script>
+	<script src="{% static 'dist/shamman/general.js' %}"></script>
 
 
 	<script src="{% static 'dist/js/apps.min.js' %}"></script>
+
+
+	<script src="https://unpkg.com/leaflet/dist/leaflet.js" crossorigin=""></script> 
+	<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js" crossorigin=""></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous"></script> 
 	<!-- ================== END PAGE LEVEL JS ================== -->

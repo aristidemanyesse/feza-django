@@ -1,9 +1,10 @@
 from django.shortcuts import render
-
+import json
+from django.core.serializers import serialize
 # Create your views here.
-from django.shortcuts import render
 from annoying.decorators import render_to
 from UserApp.models import *
+from officineApp.models import Officine
 
 # Create your views here.
 
@@ -34,8 +35,19 @@ def utilisateur(request):
 @render_to('UserApp/map.html')
 def map(request):
     if request.method == "GET":
-        medicaments = Utilisateur.objects.filter()
+        circonscriptions = Circonscription.objects.filter(deleted = False)
+        datas  = []
+        for cir in circonscriptions:
+            item = {}
+            item["id"] = cir.id
+            item["name"] = cir.name
+            item["officines"] = json.loads(serialize("geojson", Officine.objects.filter(deleted = False, circonscription=cir))) 
+            datas.append(item)
+        
+        officines = Officine.objects.filter(deleted = False)
         ctx = {
-            "medicaments" : medicaments
+            "circonscriptions" : circonscriptions,
+            "officines" : officines,
+            "datas" : datas,
         }
         return ctx

@@ -34,6 +34,7 @@ urlpatterns = [
     path('officines/', include('officineApp.urls')),
     path('utilisateurs/', include('UserApp.urls')),
     path('produits/', include('produitApp.urls')),
+    path('core/', include('coreApp.urls')),
     path('admin/', admin.site.urls),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -39,21 +39,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django.contrib.gis",
+    "leaflet",
     "coreApp",
     "produitApp",
     "officineApp",
     "UserApp",
-    "mainApp"
+    "mainApp",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    
+    'coreApp.middleware.LockoutMiddleware',
+    'coreApp.middleware.AccessCheckMiddleware',
+    'coreApp.middleware.InjectMyAppDataMiddleware',
+    'coreApp.middleware.ChangeLanguage',
 ]
 
 ROOT_URLCONF = 'settings.urls'
@@ -139,3 +146,28 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+LOGIN_URL = "/auth/login/"
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'   # Engine (default)
+SESSION_COOKIE_NAME = "sessionid"                       #  Session's cookie is saved on the browser, namely: sessionId = random string (default)
+SESSION_COOKIE_PATH = "/"                               #  Session's cookie saved path (default)
+SESSION_COOKIE_DOMAIN = None                             #  Session's cookie saved domain (default)
+SESSION_COOKIE_SECURE = False                            #  Whether HTTPS is transferred for cookies (default)
+SESSION_COOKIE_HTTPONLY = True                           #  Whether the session's cookie only supports HTTP transmission (default)
+SESSION_COOKIE_AGE = 1209600                             #  Session's cookie failure date (2 weeks) (default)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False                  #  Whether to close your browser makes the session expire (default)
+SESSION_SAVE_EVERY_REQUEST = True  
+
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (5.352731, -3.907053),
+    'DEFAULT_ZOOM': 12,
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 22,
+    'DEFAULT_PRECISION': 6,
+    'ATTRIBUTION_PREFIX': 'Feza ¶ Application en development',
+    'MINIMAP': True,
+}
