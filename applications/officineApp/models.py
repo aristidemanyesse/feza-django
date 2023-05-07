@@ -20,7 +20,6 @@ class Officine(BaseModel):
     name = models.CharField(max_length=255)
     localisation = models.TextField(default="", null=True, blank=True)
     geometry = models.PointField(default="", srid=4326, blank=True)
-    name = models.CharField(max_length=255)
     lon = models.FloatField(default=0.0)
     lat = models.FloatField(default=0.0)
     contact = models.CharField(max_length=255, null=True, blank=True)

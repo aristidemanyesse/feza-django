@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.contrib.gis",
     "leaflet",
+    "graphene_django",
+    
     "coreApp",
     "produitApp",
     "officineApp",
@@ -170,4 +172,12 @@ LEAFLET_CONFIG = {
     'DEFAULT_PRECISION': 6,
     'ATTRIBUTION_PREFIX': 'Feza ¶ Application en development',
     'MINIMAP': True,
+}
+
+GRAPHENE = {
+    'SCHEMA_INDENT': 4,
+    "SCHEMA": "settings.schemas.schema",
+    'MIDDLEWARE': [
+        'graphene_django_extras.ExtraGraphQLDirectiveMiddleware'
+    ]
 }
