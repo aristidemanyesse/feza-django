@@ -7,6 +7,7 @@ class TypeOfficineType(DjangoSerializerType):
         serializer_class = TypeOfficineSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("exact",),
             "etiquette": ("exact",),
         }
@@ -28,6 +29,7 @@ class OfficineType(DjangoSerializerType):
         exclude_fields = ('geometry',)
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("icontains", "iexact"),
             "circonscription__id": ("exact", )
         }
@@ -38,6 +40,7 @@ class ResponsableOfficineType(DjangoSerializerType):
         serializer_class = ResponsableOfficineSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "first_name": ("icontains", "iexact"),
             "last_name": ("icontains", "iexact"),
             "username": ("icontains", "iexact"),

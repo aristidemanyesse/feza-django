@@ -4,7 +4,7 @@ import graphene
 
 
 class UserAppQuery(object):
-    search_dsm = UtilisateurType.ListField(action=graphene.String(default_value="search_utilisateur"))
+    search_utilisateur = UtilisateurType.ListField(action=graphene.String(default_value="search_utilisateur"))
     
     
 class UserAppMutation(object):

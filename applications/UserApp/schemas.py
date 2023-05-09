@@ -9,9 +9,10 @@ class UtilisateurType(DjangoSerializerType):
         exclude_fields = ('geometry',)
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "fullname": ("icontains", "iexact"),
             "otp": ("exact",),
             "circonscription__id": ("exact",),
-            "contact": ("icontains", "iexact"),
+            "contact": ("exact", ),
             "is_valide": ("exact", ),
         }

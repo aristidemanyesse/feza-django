@@ -7,6 +7,7 @@ class TypeProduitType(DjangoSerializerType):
         serializer_class = TypeProduitSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("exact",),
             "etiquette": ("exact",),
         }
@@ -17,6 +18,7 @@ class StockStateType(DjangoSerializerType):
         serializer_class = StockStateSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("exact",),
             "etiquette": ("exact",),
         }
@@ -27,6 +29,7 @@ class ProduitType(DjangoSerializerType):
         serializer_class = ProduitSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("icontains", "iexact"),
             "type__id": ("exact",),
             "only_ordonnance": ("exact",),
@@ -39,6 +42,7 @@ class ProduitInOfficineType(DjangoSerializerType):
         serializer_class = ProduitInOfficineSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "quantite": ("lte", "gte", "exact"),
             "officine__id": ("exact",),
             "produit__id": ("exact",),
@@ -52,6 +56,7 @@ class AssuranceType(DjangoSerializerType):
         serializer_class = AssuranceSerializer
         filter_fields = {
             "id": ("exact", ),
+            "deleted": ("exact", ),
             "name": ("exact",),
             "etiquette": ("exact",),
         }

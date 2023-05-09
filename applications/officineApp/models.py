@@ -14,21 +14,23 @@ class TypeOfficine(BaseModel):
 class Circonscription(BaseModel):
     name = models.CharField(max_length=255)
     geometry = models.PolygonField(srid=4326, default=Polygon( ((0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0)) ), blank=True)
+    geometry_json        = models.TextField(default="")
 
 
 class Officine(BaseModel):
-    name = models.CharField(max_length=255)
-    localisation = models.TextField(default="", null=True, blank=True)
-    geometry = models.PointField(default="", srid=4326, blank=True)
-    lon = models.FloatField(default=0.0)
-    lat = models.FloatField(default=0.0)
-    contact = models.CharField(max_length=255, null=True, blank=True)
-    contact2 = models.CharField(max_length=255, null=True, blank=True)
-    type = models.ForeignKey(TypeOfficine, null = True, blank = True, on_delete= models.CASCADE, related_name="type_officine")
+    name            = models.CharField(max_length=255)
+    localisation    = models.TextField(default="", null=True, blank=True)
+    geometry        = models.PointField(default="", srid=4326, blank=True)
+    geometry_json   = models.TextField(default="")
+    lon             = models.FloatField(default=0.0)
+    lat             = models.FloatField(default=0.0)
+    contact         = models.CharField(max_length=255, null=True, blank=True)
+    contact2        = models.CharField(max_length=255, null=True, blank=True)
+    type            = models.ForeignKey(TypeOfficine, null = True, blank = True, on_delete= models.CASCADE, related_name="type_officine")
     circonscription = models.ForeignKey(Circonscription, null = True, blank = True, on_delete= models.CASCADE, related_name="circonscription_officine")
-    image    = models.ImageField(max_length = 255, upload_to = "static/images/pays/", default="", null = True, blank=True)
-    image2    = models.ImageField(max_length = 255, upload_to = "static/images/pays/", default="", null = True, blank=True)
-    image3    = models.ImageField(max_length = 255, upload_to = "static/images/pays/", default="", null = True, blank=True)
+    image           = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
+    image2          = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
+    image3          = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
 
 
 
@@ -63,6 +65,8 @@ def sighandler(instance, **kwargs):
     else:
         instance.lat = instance.geometry.x
         instance.lon = instance.geometry.y
+    
+    instance.geometry_json = instance.geometry.geojson
 
 
 
