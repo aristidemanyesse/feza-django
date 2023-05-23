@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 import json
 from django.core.serializers import serialize
 from django.contrib.auth import authenticate, logout
+from officineApp.models import TypeOfficine
 
 from officineApp.models import Officine
 from produitApp.models import *
@@ -47,7 +48,7 @@ def deconnexion(request):
 @render_to('mainApp/dashboard.html')
 def dashboard(request):
     if request.method == "GET":
-        officines = Officine.objects.filter(deleted = False)
+        officines = Officine.objects.filter(deleted = False, type  = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
         users = Utilisateur.objects.filter(deleted = False)
         markers = json.loads(serialize("geojson", officines))

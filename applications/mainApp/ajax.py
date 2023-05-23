@@ -19,10 +19,13 @@ def connexion(request):
         user = authenticate(request, username=datas["identifiant"], password=datas["password"])
         if user is not None:
             try:
-                respo = ResponsableOfficine.objects.get(pk = user.id)
-                if respo.is_never_connected:
-                    request.session["user_id"] = respo.id
-                    return JsonResponse({"status":True, "new":True})
+                if user.is_superuser:
+                    request.session["user_id"] = user.id
+                else:
+                    respo = ResponsableOfficine.objects.get(pk = user.id)
+                    if respo.is_never_connected:
+                        request.session["respo_id"] = respo.id
+                        return JsonResponse({"status":True, "new":True})
                 login(request, user)
                 return JsonResponse({"status":True})
             except Exception as e:
@@ -77,13 +80,13 @@ def unlocked(request):
 def first_user(request):
     if request.method == "POST":
         datas = request.POST
-        if len(datas["password"]) >= 8:
+        if len(datas["password"]) >= 6:
             if datas["password2"] == datas["password"]:
                 try:
-                    if ResponsableOfficine.objects.filter(deleted=False, username=datas["identifiant"]).exclude(pk = request.session["user_id"]).count() > 0:
+                    if ResponsableOfficine.objects.filter(deleted=False, username=datas["identifiant"]).exclude(pk = request.session["respo_id"]).count() > 0:
                         raise Exception(_("Vous ne pouvez pas utiliser ce nom d'utilisateur, veuillez le changer !"))
                     
-                    respo = ResponsableOfficine.objects.get(pk = request.session["user_id"])
+                    respo = ResponsableOfficine.objects.get(pk = request.session["respo_id"])
                     if User.objects.filter(username=datas["identifiant"]).exclude(pk = respo.user_ptr_id).count() > 0:
                         raise Exception(_("Vous ne pouvez pas utiliser ce nom d'utilisateur, veuillez le changer !"))
                     

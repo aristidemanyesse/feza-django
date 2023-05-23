@@ -30,7 +30,8 @@ class Produit(BaseModel):
     only_ordonnance = models.BooleanField(default=False)
     type = models.ForeignKey(TypeProduit, null = True, blank = True, on_delete= models.CASCADE, related_name="type_produit")
     image = models.ImageField(max_length = 255, upload_to = "media/images/produits/", default="media/images/produits/default.jpg", null = True, blank=True)
-
+    class Meta:
+        ordering = ("name",)
 
 
 class ProduitInOfficine(BaseModel):
@@ -38,6 +39,12 @@ class ProduitInOfficine(BaseModel):
     stock_state = models.ForeignKey(StockState, null = True, blank = True, on_delete=models.CASCADE, related_name="stock_in_officine")
     produit = models.ForeignKey(Produit, null = True, blank = True, on_delete= models.CASCADE, related_name="produit_in_officine")
     officine = models.ForeignKey(Officine, null = True, blank = True, on_delete= models.CASCADE, related_name="officine_for_produit")
+    
+    class Meta:
+        ordering = ("produit__name", "-stock_state__etiquette")
+    
+    def __str__(self):
+        return str(self.produit.name) + " dans " + str(self.officine.name)
 
 
 

@@ -11,7 +11,7 @@ from django.core.serializers import serialize
 @render_to('officineApp/liste.html')
 def liste(request):
     if request.method == "GET":
-        officines = Officine.objects.filter(deleted = False)
+        officines = Officine.objects.filter(deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         ctx = {
             "officines" : officines
         }
@@ -31,7 +31,7 @@ def map(request):
             item["officines"] = json.loads(serialize("geojson", Officine.objects.filter(deleted = False, circonscription=cir))) 
             datas.append(item)
         
-        officines = Officine.objects.filter(deleted = False)
+        officines = Officine.objects.filter(deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         ctx = {
             "circonscriptions" : circonscriptions,
             "officines" : officines,
@@ -43,7 +43,7 @@ def map(request):
 @render_to('officineApp/officine.html')
 def officine(request, id):
     if request.method == "GET":
-        officine = Officine.objects.get(id = id, deleted = False)
+        officine = Officine.objects.get(id = id, deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         ctx = {
             "officine" : officine
         }

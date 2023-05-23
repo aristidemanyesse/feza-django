@@ -116,51 +116,6 @@
     <!-- end row -->
 </div>
 
-
-{% block "scriptjs" %}
-    <script>
-        $(document).ready(function() {
-            DashboardV2.init();
-            var mymap = L.map('mymap').setView([7.561891, -5.376317], 6);
-    
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                maxZoom: 22,
-                tileSize: 512,
-                zoomOffset: -1
-            }).addTo(mymap);
-    
-            var customIcon = L.icon({
-                iconUrl: "{% static 'dist/img/icons/Rond_rouge.png' %}",
-                iconSize: [7, 7],
-                iconAnchor: [16, 16],
-                popupAnchor: [0, -16]
-            });
-    
-            const markers = JSON.parse(document.getElementById("markers-data").textContent)
-            console.log(markers["features"])
-            var markersLayer = L.markerClusterGroup();
-    
-            for (var item of markers["features"]) {
-                console.log(item)
-                var marker = L.geoJSON(item, {
-                    pointToLayer: function (feature, latlng) {
-                    return L.marker(latlng, { icon: customIcon });
-                    },
-                }).addTo(mymap);
-                markersLayer.addLayer(marker);
-                var popupContent = '<div style="padding: 1em;">' +
-                    '<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
-                    '<p style="margin: 0;">Contenu du popup</p>' +
-                    '</div>';
-                marker.bindPopup(popupContent);
-            }
-            mymap.addLayer(markersLayer);
-        });
-    </script>
-{% endblock "scriptjs" %}
-
-
 <style>
 #mymap{
     height: 300px !important;
@@ -223,3 +178,46 @@
 </style>
 {% endblock "content" %}
 
+
+{% block "scriptjs" %}
+    <script>
+        $(document).ready(function() {
+            DashboardV2.init();
+            var mymap = L.map('mymap').setView([7.561891, -5.376317], 6);
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 22,
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(mymap);
+    
+            var customIcon = L.icon({
+                iconUrl: "{% static 'dist/img/icons/Rond_rouge.png' %}",
+                iconSize: [7, 7],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+    
+            const markers = JSON.parse(document.getElementById("markers-data").textContent)
+            console.log(markers["features"])
+            var markersLayer = L.markerClusterGroup();
+    
+            for (var item of markers["features"]) {
+                console.log(item)
+                var marker = L.geoJSON(item, {
+                    pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, { icon: customIcon });
+                    },
+                }).addTo(mymap);
+                markersLayer.addLayer(marker);
+                var popupContent = '<div style="padding: 1em;">' +
+                    '<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
+                    '<p style="margin: 0;">Contenu du popup</p>' +
+                    '</div>';
+                marker.bindPopup(popupContent);
+            }
+            mymap.addLayer(markersLayer);
+        });
+    </script>
+{% endblock "scriptjs" %}

@@ -20,6 +20,7 @@ class CirconscriptionType(DjangoSerializerType):
         filter_fields = {
             "id": ("exact", ),
             "name": ("exact", ),
+            "deleted": ("exact", ),
         }
         
         
@@ -31,6 +32,8 @@ class OfficineType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "name": ("icontains", "iexact"),
+            "type__id": ("exact", ),
+            "type__etiquette": ("exact", ),
             "circonscription__id": ("exact", )
         }
         

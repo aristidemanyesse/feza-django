@@ -11,4 +11,4 @@ class UtilisateurAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['__str__', "circonscription", "contact",  "is_valide"]
+    list_display = ['__str__', "circonscription", "contact", "imei", "otp", "is_valide"]

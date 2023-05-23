@@ -1,9 +1,19 @@
 
+from officineApp.models import Circonscription, TypeOfficine
+from officineApp.schemas import OfficineType
 from .schemas import *
 from .serializers import *
-import graphene
+import graphene, json, requests, geojson
+from django.contrib.gis.geos import Point, Polygon
+from graphene_django import DjangoObjectType
+class ProduitsAvialableInOfficineType(graphene.ObjectType):
+    officine = graphene.String()
+    produits = graphene.List(graphene.String)
+    ratio = graphene.Int()
+    distance = graphene.Float()
+    route = graphene.String()
 
-
+    
 class ProduitAppQuery(object):
     
     search_type_produit = TypeProduitType.ListField(action=graphene.String(default_value="search_type_produit"))
@@ -17,7 +27,59 @@ class ProduitAppQuery(object):
     search_assurance = AssuranceType.ListField(action=graphene.String(default_value="search_assurance"))
     
     
+    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(required=True), produits=graphene.List(graphene.String, required=True))
+    def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  **kwargs):
+        officines = Officine.objects.filter(deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        produits_in = Produit.objects.filter(deleted = False, id__in=produits)
+        liste = []
+        point = Point(5.260298, -3.9522842)
+        for officine in officines:
+            pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
+            pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
+            ratio = pro_offs.count()
+            distance = round(point.distance(Point(officine.lon, officine.lat)) * 100, 2)
+            if ratio == 0 or distance > 25:
+                continue
+            
+            pros = [pro.produit.id for pro in pro_offs]
+            liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": distance})
+            print(officine)
+            
+        liste_triee = sorted(liste, key=lambda x: (-x['ratio'], x['distance']))
+        datas = []
+        for elment in liste_triee[:15]:
+            multilinestring = {"errors":""}
+            try:
+                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lon},{officine.lat}?steps=true&geometries=geojson"
+                response = requests.get(url)
+                data = response.json()
+                if data['code'] != 'Ok':
+                    geometry = data['routes'][0]['legs'][0]['steps'][0]['geometry']
+                    multilinestring = json.dumps(geometry)
+            except Exception as e:
+                print(f"Error generation routing for {officine.name}", e)
 
+            print(data['code'])
+            print(multilinestring)
+            item = ProduitsAvialableInOfficineType(officine = elment["officine"].id, produits = elment["produits"], ratio = elment["ratio"], distance = elment["distance"], route = json.dumps(multilinestring))
+            datas.append(item)
+        return datas
+    
+    
+    class ProduitType(DjangoObjectType):
+        class Meta:
+            model = Produit
+            
+    class TypeProduitType(DjangoObjectType):
+        class Meta:
+            model = TypeProduit
+        
+    search_produits = graphene.List(ProduitType, produits=graphene.List(graphene.String, required=True))
+    def resolve_search_produits(root, info, produits,  **kwargs):
+        return Produit.objects.filter(id__in=produits)
+
+
+    
 class ProduitAppMutation(object):
     # Dtm
     create_type_produit = TypeProduitType.CreateField()

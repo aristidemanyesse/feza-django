@@ -43,5 +43,6 @@ class ProduitInOfficineAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ["id", 'produit', "officine"]
+    list_display = ["id", 'produit', "officine", "stock_state"]
+    list_editable = ["stock_state"]
 

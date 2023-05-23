@@ -12,6 +12,10 @@ mysqlclient = "*"
 graphene-django-extras = "*"
 python-dateutil = "*"
 graphene-django = "*"
+graphene-gis = "*"
+osm2geojson = "*"
+osmium = "*"
+geojson = "*"
 
 [dev-packages]
 

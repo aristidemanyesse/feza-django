@@ -12,6 +12,7 @@ class UtilisateurType(DjangoSerializerType):
             "deleted": ("exact", ),
             "fullname": ("icontains", "iexact"),
             "otp": ("exact",),
+            "imei": ("exact",),
             "circonscription__id": ("exact",),
             "contact": ("exact", ),
             "is_valide": ("exact", ),

@@ -20,7 +20,7 @@ class LockoutMiddleware:
         return response     
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if '/admin/' not in request.path_info and '/auth/' not in request.path_info and '/graphql/' not in request.path_info:
+        if '/admin/' not in request.path_info and '/auth/' not in request.path_info and '/graphql/' not in request.path_info and '/media/' not in request.path_info:
             if 'locked' in request.session:
                 if request.session['locked'] :
                     return redirect("mainApp:locked")
@@ -96,7 +96,7 @@ class InjectMyAppDataMiddleware:
         request.date1 = datetime.date.fromisoformat(request.session["date1"])
         request.date2 = datetime.date.fromisoformat(request.session["date2"])
         
-        if not request.path_info.startswith('/admin/') and not request.path_info.startswith('/graphql/'):
+        if not request.path_info.startswith('/admin/') and not request.path_info.startswith('/graphql/') and not request.path_info.startswith('/media/'):
     
             request.officine = None
             if request.user.is_authenticated:
