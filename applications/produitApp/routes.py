@@ -6,6 +6,9 @@ from .serializers import *
 import graphene, json, requests, geojson
 from django.contrib.gis.geos import Point, Polygon
 from graphene_django import DjangoObjectType
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
+
 class ProduitsAvialableInOfficineType(graphene.ObjectType):
     officine = graphene.String()
     produits = graphene.List(graphene.String)
@@ -29,24 +32,20 @@ class ProduitAppQuery(object):
     
     search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(required=True), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
     def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
-        print(circonscription)
-        officines = Officine.objects.filter(deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        point = Point(latitude, longitude)
+        officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 10000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         liste = []
-        point = Point(latitude, longitude)
-        print(officines)
         for officine in officines:
             pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
             pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
             ratio = pro_offs.count()
-            distance = round(point.distance(Point(officine.lon, officine.lat)) * 100, 2)
-            if ratio == 0 or distance > 25:
-                continue
+            # distance = round(point.distance(officine.geometry) * 100, 2)
+            # if ratio == 0 or distance > 25:
+            #     continue
             
-            print(officine)
             pros = [pro.produit.id for pro in pro_offs]
-            liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": distance})
-        print(point)
+            liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": officine.distance})
         
         liste_triee = sorted(liste, key=lambda x: (-x['ratio'], x['distance']))
         datas = []

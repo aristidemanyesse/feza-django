@@ -11,30 +11,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
-        # print("Super admin registered")
-        # user = User(
-        #     username = "admin",
-        #     email = "",
-        #     first_name = "Super",
-        #     last_name = "Administrateur",
-        # )
-        # user.set_password("12345678")
-        # user.is_superuser = True
-        # user.is_staff = True
-        # user.save()
+        print("Super admin registered")
+        user = User(
+            username = "admin",
+            email = "",
+            first_name = "Super",
+            last_name = "Administrateur",
+        )
+        user.set_password("12345678")
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
         
-        
-        datas = {
-            "Pharmacie privée":"PHARMACIE",
-            "Pharmacie d'hopital":"OFFICINE",
-            "Laboratoire médical":"LABORATOIRE",
-            "Clinique privée":"CLINIQUE"
-        }
-        for x in datas:
-            TypeOfficine.objects.get_or_create(
-                name = x, 
-                etiquette = datas[x], 
-            )
         
         datas = {
             "Médicament":"MEDICAMENT",
@@ -48,9 +36,9 @@ class Command(BaseCommand):
             
             
         datas = {
-            "Disponible":"DISPONIBLE",
-            "Stock bas":"STOCK_BAS",
-            "Insdisponibleck":"RUPTURE",
+            "Disponible":"1",
+            "Stock bas":"0",
+            "Insdisponible":"-1",
         }
         for x in datas:
             StockState.objects.get_or_create(

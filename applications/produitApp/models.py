@@ -1,5 +1,5 @@
 from django.db import models
-from officineApp.models import Officine
+from officineApp.models import Officine, TypeOfficine
 from coreApp.models import BaseModel
 # Create your models here.
 from annoying.decorators import signals
@@ -25,6 +25,9 @@ class TypeProduit(BaseModel):
 
 class Produit(BaseModel):
     name = models.CharField(max_length=255,default="")
+    cis = models.CharField(max_length=255, default="")
+    forme = models.CharField(max_length=255, default="")
+    voies = models.CharField(max_length=255, default="")
     description = models.TextField(default="")
     codebarre = models.CharField(max_length=255, unique=True)
     only_ordonnance = models.BooleanField(default=False)
@@ -59,7 +62,7 @@ class Assurance(BaseModel):
 @signals.post_save(sender=Produit)
 def sighandler(instance, created, **kwargs):
     if created:
-        for officine in Officine.objects.all():
+        for officine in Officine.objects.filter(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
             ProduitInOfficine.objects.create(
                 officine = officine,
                 produit = instance

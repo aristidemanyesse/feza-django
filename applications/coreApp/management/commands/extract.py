@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 import os, csv, json
 from officineApp.models import Circonscription, Officine
-from produitApp.models import TypeProduit, StockState, ProduitInOfficine
+from produitApp.models import Produit, TypeProduit, StockState, ProduitInOfficine
 from officineApp.models import TypeOfficine
 from django.contrib.auth.models import User, Group, Permission
 from settings import settings
@@ -37,32 +37,57 @@ class Command(BaseCommand):
         #     off.save()
         #     print(off)
         
-        for pro in  ProduitInOfficine.objects.filter().order_by("?")[:16000]:
-            pro.stock_state = StockState.objects.get(etiquette = StockState.RUPTURE)
-            print(pro)
-            pro.save()
+        # for pro in  ProduitInOfficine.objects.filter().order_by("?")[:16000]:
+        #     pro.stock_state = StockState.objects.get(etiquette = StockState.RUPTURE)
+        #     print(pro)
+        #     pro.save()
             
-        # path = os.path.join(settings.BASE_DIR, "static/administrations/hospitaux-de-cote-d'ivoire.csv") 
-        # with open(path, 'rt', encoding = 'utf-8') as f:
-        #     data = csv.reader(f)
-        #     i = 0
-        #     for row in data:
-        #         if i == 0:
-        #             header = row[0].split(';')
-        #             i = 1
-        #             continue
+        path = os.path.join(settings.BASE_DIR, "static/administrations/hospitaux-de-cote-d'ivoire.csv") 
+        with open(path, 'rt', encoding = 'utf-8') as f:
+            data = csv.reader(f)
+            i = 0
+            for row in data:
+                if i == 0:
+                    header = row[0].split(';')
+                    i = 1
+                    continue
                 
-        #         row         = str(row).split(';')
-        #         name        = get(row, header, "Nom de l'établissement").replace("']", "") or ""
-        #         coordonnees = get(row, header, "geometry") or ""
-        #         coordonnees = coordonnees.replace("'", "").replace('"', "")
-        #         circonsp    = get(row, header, "Ville et commune") or get(row, header, "Quartier") or "---"
-        #         categorie   = get(row, header, "Catégorie")
-        #         coordonnees = coordonnees.split(",")
+                row         = str(row).split(';')
+                name        = get(row, header, "Nom de l'établissement").replace("']", "") or ""
+                coordonnees = get(row, header, "geometry") or ""
+                coordonnees = coordonnees.replace("'", "").replace('"', "")
+                circonsp    = get(row, header, "Ville et commune") or get(row, header, "Quartier") or "---"
+                categorie   = get(row, header, "Catégorie")
+                coordonnees = coordonnees.split(",")
                 
-        #         type, created = TypeOfficine.objects.get_or_create(name = categorie)
-        #         circonscription, created = Circonscription.objects.get_or_create(name = circonsp)
-        #         officine, created = Officine.objects.get_or_create(type = type, circonscription=circonscription,name = name, lat=float(coordonnees[0]), lon=float(coordonnees[1]), localisation=get(row, header, "Quartier"))
+                type, created = TypeOfficine.objects.get_or_create(name = categorie, etiquette = categorie.upper())
+                circonscription, created = Circonscription.objects.get_or_create(name = circonsp)
+                officine, created = Officine.objects.get_or_create(type = type, circonscription=circonscription,name = name, lat=float(coordonnees[0]), lon=float(coordonnees[1]), localisation=get(row, header, "Quartier"))
                 
-        #         print(officine, " créée !")
+                print(officine, " créée !")
+                
+                
+
+        path = os.path.join(settings.BASE_DIR, "static/administrations/medicaments_liste.csv") 
+        with open(path, 'rt', encoding = 'utf-8') as f:
+            data = csv.reader(f)
+            i = 0
+            for row in data:
+                if i == 0:
+                    header = row[0].split(';')
+                    i = 1
+                    continue
+                
+                row               = str(row).split(';')
+                cis               = get(row, header, "cis").replace("']", "").replace("['", "") or ""
+                name              = get(row, header, "name").replace("']", "").split("',")[0] or ""
+                forme             = get(row, header, "forme").replace("']", "") or ""
+                voies             = get(row, header, "voies").replace("']", "") or ""
+                only_ordonnance   = get(row, header, "only_ordonnance") == "Oui"
+                
+                type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)
+                produit, created = Produit.objects.get_or_create(type = type, cis=cis, codebarre=cis, name = name, forme = forme, voies = voies, only_ordonnance=only_ordonnance)
+                print(produit, " créée !")
+                
+                
                 
