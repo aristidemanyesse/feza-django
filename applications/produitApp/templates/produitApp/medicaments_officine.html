@@ -56,15 +56,26 @@
                         {% endif %}
                     </div>
                     <div class="rating pull-left">
-                        <div class="btn-group ">
-                            <a class="btn btn-{{item.stock_state.classe}} btn-xs">{{item.stock_state}}</a>
-                            <button type="button" class="btn btn-{{item.stock_state.classe}} btn-xs dropdown-toggle" data-toggle="dropdown">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
+                        <div class="btn-group">
+                            {% for state in stocks %}
+                                {% if state.etiquette == item.stock_state.etiquette %}
+                                    <a id="{{state.id}}" class="btn btn-{{state.classe}} btn-xs">{{state}}</a>
+                                    <button type="button" class="btn btn-{{state.classe}} btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                {% else %}
+                                    <a id="{{state.id}}" class="hide" class="btn btn-{{state.classe}} btn-xs">{{state}}</a>
+                                    <button type="button" class="btn btn-{{state.classe}} btn-xs dropdown-toggle hide" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                {% endif %}
+                            {% endfor %}
+                            <ul class="dropdown-menu" role="menu" id="{{item.id}}">
                                 {% for state in stocks %}
                                     {% if state.etiquette != item.stock_state.etiquette %}
-                                        <li id="{{state.etiquette}}"><a href="#">{{state.name}}</a></li>
+                                        <li id="{{state.id}}" onclick="changeState('{{item.id}}', '{{state.id}}')"><a href="#">{{state.name}}</a></li>
+                                    {% else %}
+                                        <li id="{{state.id}}" class="hide" onclick="changeState('{{item.id}}', '{{state.id}}')"><a href="#">{{state.name}}</a></li>
                                     {% endif %}
                                 {% endfor %}
                             </ul>
@@ -85,5 +96,14 @@
 {% block "scriptjs" %}
 <script>
     Gallery.init();
+    {% include "./medicaments_officine.js" %}
 </script>
 {% endblock "scriptjs" %}
+
+
+{% block "style" %}
+.hide{
+    display: hidden;
+}
+{% endblock "style" %}
+

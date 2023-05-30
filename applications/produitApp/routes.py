@@ -27,12 +27,14 @@ class ProduitAppQuery(object):
     search_assurance = AssuranceType.ListField(action=graphene.String(default_value="search_assurance"))
     
     
-    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(required=True), produits=graphene.List(graphene.String, required=True))
-    def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  **kwargs):
+    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(required=True), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
+    def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
+        print(circonscription)
         officines = Officine.objects.filter(deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         liste = []
-        point = Point(5.260298, -3.9522842)
+        point = Point(latitude, longitude)
+        print(officines)
         for officine in officines:
             pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
             pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
@@ -41,26 +43,28 @@ class ProduitAppQuery(object):
             if ratio == 0 or distance > 25:
                 continue
             
+            print(officine)
             pros = [pro.produit.id for pro in pro_offs]
             liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": distance})
-            print(officine)
-            
+        print(point)
+        
         liste_triee = sorted(liste, key=lambda x: (-x['ratio'], x['distance']))
         datas = []
         for elment in liste_triee[:15]:
-            multilinestring = {"errors":""}
+            officine = elment["officine"]
+            multilinestring = {"":""}
             try:
-                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lon},{officine.lat}?steps=true&geometries=geojson"
+                url = f"https://router.project-osrm.org/route/v1/car/{point.y},{point.x};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+                print(url)
                 response = requests.get(url)
                 data = response.json()
-                if data['code'] != 'Ok':
-                    geometry = data['routes'][0]['legs'][0]['steps'][0]['geometry']
+                if data['code'] == 'Ok':
+                    geometry = data['routes'][0]
+                    geometry[ "type"] = "Feature"
                     multilinestring = json.dumps(geometry)
             except Exception as e:
                 print(f"Error generation routing for {officine.name}", e)
 
-            print(data['code'])
-            print(multilinestring)
             item = ProduitsAvialableInOfficineType(officine = elment["officine"].id, produits = elment["produits"], ratio = elment["ratio"], distance = elment["distance"], route = json.dumps(multilinestring))
             datas.append(item)
         return datas

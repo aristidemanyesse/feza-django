@@ -18,7 +18,7 @@ class Utilisateur(BaseModel):
     is_valide       = models.BooleanField(default = False)
     geometry        = models.PointField(srid=4326, null=True, blank=True)
     geometry_json   = models.TextField(default="")
-    circonscription = models.ForeignKey(Circonscription, on_delete = models.CASCADE, related_name="circonscription_utilisateur")
+    circonscription = models.ForeignKey(Circonscription, on_delete = models.CASCADE, related_name="circonscription_utilisateur" , null = True, blank=True)
     image           = models.ImageField(default="media/images/utilisateurs/default.jpg", upload_to = "media/images/utilisateurs/", max_length=255,  null=True, blank=True)
 
     class Meta:
