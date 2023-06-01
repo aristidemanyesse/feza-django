@@ -30,9 +30,9 @@ class ProduitAppQuery(object):
     search_assurance = AssuranceType.ListField(action=graphene.String(default_value="search_assurance"))
     
     
-    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(required=True), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
+    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
     def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
-        point = Point(latitude, longitude)
+        point = Point(latitude, longitude, srid=4326)
         officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 10000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         liste = []
