@@ -30,18 +30,7 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
     
     def handle(self, *args, **options):
-        # for off in Officine.objects.all():
-        #     test = off.lat
-        #     off.lat = off.lon
-        #     off.lon = test
-        #     off.save()
-        #     print(off)
-        
-        # for pro in  ProduitInOfficine.objects.filter().order_by("?")[:16000]:
-        #     pro.stock_state = StockState.objects.get(etiquette = StockState.RUPTURE)
-        #     print(pro)
-        #     pro.save()
-            
+
         path = os.path.join(settings.BASE_DIR, "static/administrations/hospitaux-de-cote-d'ivoire.csv") 
         with open(path, 'rt', encoding = 'utf-8') as f:
             data = csv.reader(f)
@@ -86,7 +75,7 @@ class Command(BaseCommand):
                 only_ordonnance   = get(row, header, "only_ordonnance") == "Oui"
                 
                 type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)
-                produit, created = Produit.objects.get_or_create(type = type, cis=cis, codebarre=cis, name = name, forme = forme, voies = voies, only_ordonnance=only_ordonnance)
+                produit, created = Produit.objects.get_or_create(type = type, name = name, defaults={"cis":cis, "codebarre":cis,  "forme" : forme, "voies" : voies, "only_ordonnance":only_ordonnance})
                 print(produit, " créée !")
                 
                 

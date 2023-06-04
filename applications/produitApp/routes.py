@@ -32,7 +32,8 @@ class ProduitAppQuery(object):
     
     search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
     def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
-        point = Point(latitude, longitude, srid=4326)
+        point = Point(longitude, latitude, srid=4326)
+        print(point)
         officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 10000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         liste = []
@@ -40,12 +41,12 @@ class ProduitAppQuery(object):
             pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
             pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
             ratio = pro_offs.count()
-            # distance = round(point.distance(officine.geometry) * 100, 2)
-            # if ratio == 0 or distance > 25:
-            #     continue
+            if ratio == 0 :
+                continue
             
+            print(officine)
             pros = [pro.produit.id for pro in pro_offs]
-            liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": officine.distance})
+            liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": round(officine.distance*100, 2)})
         
         liste_triee = sorted(liste, key=lambda x: (-x['ratio'], x['distance']))
         datas = []

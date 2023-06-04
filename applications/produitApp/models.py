@@ -59,28 +59,28 @@ class Assurance(BaseModel):
 
 
 
-@signals.post_save(sender=Produit)
-def sighandler(instance, created, **kwargs):
-    if created:
-        for officine in Officine.objects.filter(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
-            ProduitInOfficine.objects.create(
-                officine = officine,
-                produit = instance
-            )
+# @signals.post_save(sender=Produit)
+# def sighandler(instance, created, **kwargs):
+#     if created:
+#         for officine in Officine.objects.filter(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
+#             ProduitInOfficine.objects.create(
+#                 officine = officine,
+#                 produit = instance
+#             )
         
-@signals.post_save(sender=Officine)
-def sighandler(instance, created, **kwargs):
-    if created:
-        for produit in Produit.objects.all():
-            ProduitInOfficine.objects.create(
-                officine = instance,
-                produit = produit
-            )
+# @signals.post_save(sender=Officine)
+# def sighandler(instance, created, **kwargs):
+#     if created:
+#         for produit in Produit.objects.all():
+#             ProduitInOfficine.objects.create(
+#                 officine = instance,
+#                 produit = produit
+#             )
             
             
 
 @signals.pre_save(sender=ProduitInOfficine)
 def sighandler(instance, **kwargs):
     if instance._state.adding:
-        instance.stock_state = StockState.objects.get(etiquette = StockState.RUPTURE)
+        instance.stock_state = StockState.objects.get(etiquette = StockState.DISPONIBLE)
     

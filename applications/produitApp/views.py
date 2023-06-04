@@ -28,9 +28,11 @@ def medicaments_officine(request, id):
         prodoffs = officine.officine_for_produit.filter(produit__deleted = False).order_by("produit__name")
         types = TypeProduit.objects.filter(deleted = False)
         stocks = StockState.objects.filter(deleted = False)
+        produits = Produit.objects.filter(deleted = False)
         ctx = {
             "prodoffs" : prodoffs,
             "types": types,
             "stocks": stocks,
+            "produits": produits,
         }
         return ctx

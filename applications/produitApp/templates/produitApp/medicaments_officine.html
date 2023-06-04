@@ -87,6 +87,37 @@
             </div>
         </div>
         {% endfor %}
+
+
+        {% for produit in produits %}
+        <div class="image {{produit.type.etiquette}} {% if produit.only_ordonnance %}ordonnance{% endif %} ">
+            <div class="image-inner">
+                <img src="{{produit.image.url}}" alt="" />
+                <p class="image-caption">
+                    #{{produit.codebarre}}
+                </p>
+            </div>
+            <div class="image-info">
+                <h4 class="title">{{produit.name}}</h4>
+                <div>
+                    <div class="pull-right">
+                        {% if produit.only_ordonnance %}
+                        <label class="label label-primary">Sur ordonnance</label>
+                        {% endif %}
+                    </div>
+                    <div class="rating pull-left">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary btn-xs" data-toggle="dropdown">
+                                <i class="check"></i> maintenant disponible
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div><br>
+                <div class="desc">{{produit.description}}</div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
