@@ -173,7 +173,7 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 22,
     'DEFAULT_PRECISION': 6,
-    'ATTRIBUTION_PREFIX': 'Feza ¶ Application en development',
+    'ATTRIBUTION_PREFIX': 'IPI ¶ Ici, les Pharmacies Ivoiriennes',
     'MINIMAP': True,
 }
 
