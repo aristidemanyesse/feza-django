@@ -1,5 +1,6 @@
-from django.shortcuts import render
 import json
+from django.shortcuts import get_object_or_404
+
 from django.core.serializers import serialize
 # Create your views here.
 from annoying.decorators import render_to
@@ -22,12 +23,12 @@ def liste(request):
 
         
 
-@render_to('UserApp/map.html')
-def utilisateur(request):
+@render_to('UserApp/utilisateur.html')
+def utilisateur(request, id):
     if request.method == "GET":
-        medicaments = Utilisateur.objects.filter()
+        utilisateur = get_object_or_404(Utilisateur, pk = id )
         ctx = {
-            "medicaments" : medicaments
+            "utilisateur" : utilisateur
         }
         return ctx
         
@@ -41,13 +42,13 @@ def map(request):
             item = {}
             item["id"] = cir.id
             item["name"] = cir.name
-            item["officines"] = json.loads(serialize("geojson", Officine.objects.filter(deleted = False, circonscription=cir))) 
+            item["utiliateurs"] = json.loads(serialize("geojson", Utilisateur.objects.filter(deleted = False, circonscription=cir))) 
             datas.append(item)
         
-        officines = Officine.objects.filter(deleted = False)
+        utilisateurs = Utilisateur.objects.filter(deleted = False)
         ctx = {
             "circonscriptions" : circonscriptions,
-            "officines" : officines,
+            "utilisateurs" : utilisateurs,
             "datas" : datas,
         }
         return ctx

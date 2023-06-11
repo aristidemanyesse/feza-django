@@ -157,3 +157,10 @@ def sort_th(context, sort_param_name, label):
         'url': context['sort_params'][sort_param_name]['url'],
         'label': label,
     }
+    
+    
+    
+    
+@register.filter('commaToDot')
+def commaToDot(obj):
+    return str(obj).replace(',', '.')

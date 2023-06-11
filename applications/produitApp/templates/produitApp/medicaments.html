@@ -1,5 +1,6 @@
 
 {% extends 'layout/base.html' %}
+{% load static %}
 
 {% block "content" %}
 <div id="content" class="content">
@@ -12,53 +13,60 @@
     <!-- begin page-header -->
     <h1 class="page-header">Liste des Médicaments </h1>
     <!-- end page-header -->
+
+
     <div class="row">
-    <div id="options" class="m-b-10 col-sm-10">
-        <span class="gallery-option-set" id="filter" data-option-key="filter">
-            <a href="#show-all" class="btn btn-default btn-xs active" data-option-value="*">
-                Tous voir
-            </a>
-            {% for type in types %}
-            <a href="#{{type.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{type.etiquette}}">
-                {{type.name}}
-            </a>
-            {% endfor %}
-            <a href="#ordonnance" class="btn btn-default btn-xs" data-option-value=".ordonnance">
-                Sur ordonnance
-            </a>
-        </span>
-    </div>
-
-    <div class="col-sm-2 text-right">
-        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-medicament"><i class="fa fa-plus"></i> Ajouter</button>
-    </div>
-</div>
-    <div id="gallery" class="gallery">
-
-        {% for medicament in medicaments %}
-        <div class="image {{medicament.type.etiquette}} {% if medicament.only_ordonnance %}ordonnance{% endif %} ">
-            <div class="image-inner">
-                <img src="{{medicament.image.url}}" alt="" />
-                <p class="image-caption">
-                    #{{medicament.codebarre}}
-                </p>
-            </div>
-            <div class="image-info">
-                <h4 class="title bold">{{medicament.name}}</h4>
-                <div class="pull-right">
-                    <button data-toggle="modal" data-target="#modal-medicament{{medicament.id}}" class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
-                    <button type="button" class="btn btn-xs btn-danger" onclick="delete_password('produit', '{{medicament.id}}')"><i class="fa fa-trash"></i></button>
+        <!-- begin col-12 -->
+        <div class="col-md-12">
+            <!-- begin panel -->
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modal-medicament" ><i class="fa fa-plus"></i> Ajouter nouveau</button>
+                        </div>
+                    <h4 class="panel-title">Médicaments pris en charge - Liste</h4>
                 </div>
-                <div class="rating">
-                    {% if medicament.only_ordonnance %}
-                    <label class="label label-primary">Sur ordonnance</label>
-                    {% endif %}
+                <div class="panel-body">
+                    <table id="data-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr class="text-uppercase">
+                                <th>#</th>
+                                <th>Code barre</th>
+                                <th>Nom officiel</th>
+                                <th>type</th>
+                                <th>ordonnance</th>
+                                <th>forme</th>
+                                <th>voies d'administration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for produit in produits %}
+                                <tr class="odd gradeX">
+                                    <td><img src="{{produit.image.url}}" style="width: 30px"></td>
+                                    <td>{{ produit.codebarre }}</td>
+                                    <td class="text-bold">{{ produit.name }}</td>
+                                    <td>{{ produit.type }}</td>
+                                    <td>{{ produit.only_ordonnance }}</td>
+                                    <td>{{ produit.forme }}</td>
+                                    <td>{{ produit.voies }}</td>
+                                    <td>
+                                        <button class="btn btn-success btn-xs btn-rounded" data-toggle="modal" data-target="#modal-modifier-medicament" onclick="get('{{produit.id}}')" ><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-danger btn-xs btn-rounded" onclick="delete_password('Produit', '{{produit.id}}')"><i class="fa fa-close"></i></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="clearfix"></div><br>
-                <div class="desc">{{medicament.description}}</div>
             </div>
+            <!-- end panel -->
         </div>
-        {% endfor %}
+        <!-- end col-12 -->
+    </div>
+
     </div>
 </div>
 
@@ -77,16 +85,39 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Nom complet officiel du médicament</label>
-                                <input type="text" name="name" class="form-control" required placeholder="Nom complet officiel du médicament" />
-                            </div><br>
-                            <div class="form-group">
-                                <label>Description du médicament</label>
-                                <textarea class="form-control" name="description" required rows="5"></textarea>
+                                <label for="">Nom complet officiel du médicament</label>
+                                <input type="text" name="name"  class="form-control" required placeholder="Nom complet officiel du médicament" />
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label>Type</label>
+                                    {% include 'layout/extra/select.html' with name="type" instances=types item=medicament.type %}   
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Code barre officiel</label>
+                                    <input type="text" name="codebarre" class="form-control" required placeholder="" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="">forme du médicament</label>
+                                    <input type="text" name="forme" class="form-control" required placeholder="" />
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Seulement sur ordonnance</label>
+                                    <select class="default-select2 form-control" style="width: 100%" name="only_ordonnance">
+                                        <option value="">Non</option>
+                                        <option value="1">Oui sur ordonnance</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInputPassword1">Code barre officiel</label>
-                                <input type="text" name="codebarre" class="form-control" required placeholder="1233454363" />
+                                <label>Voies d'administartion du médicament</label>
+                                <input class="form-control" name="voies" required rows="5"></input>
+                            </div>
+                            <div class="form-group">
+                                <label>Description du médicament</label>
+                                <textarea class="form-control" name="description" rows="5"></textarea>
                             </div>
                         </div>
                         <div class="col-sm-4 text-center" style="padding-top: 5% ">
@@ -98,7 +129,6 @@
                 </div>
                 <div class="modal-footer">
                     <input type="hidden"  name="id">
-                    <button type="button" class="btn btn-md btn-white close" data-dimdiss="modal" aria-hidden="true">Annuler</button>
                     <button type="submit" class="btn btn-md btn-success">Ajouter le médicament</button>
                 </div>
             </form>
@@ -107,8 +137,7 @@
 </div>
 
 
-{% for medicament in medicaments %}
-<div class="modal fade" id="modal-medicament{{medicament.id}}">
+<div class="modal fade" id="modal-modifier-medicament">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -120,20 +149,43 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Nom complet officiel du médicament</label>
-                                <input type="text" name="name" value="{{medicament.name}}" class="form-control" required placeholder="Nom complet officiel du médicament" />
-                            </div><br>
-                            <div class="form-group">
-                                <label>Description du médicament</label>
-                                <textarea class="form-control" name="description" required rows="5">{{medicament.description}}</textarea>
+                                <label for="">Nom complet officiel du médicament</label>
+                                <input type="text" name="name"  class="form-control" required placeholder="Nom complet officiel du médicament" />
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label>Type</label>
+                                    {% include 'layout/extra/select.html' with name="type" instances=types item=medicament.type %}   
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Code barre officiel</label>
+                                    <input type="text" name="codebarre" class="form-control" required placeholder="" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="">forme du médicament</label>
+                                    <input type="text" name="forme" class="form-control" required placeholder="" />
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Seulement sur ordonnance</label>
+                                    <select class="default-select2 form-control" style="width: 100%" name="only_ordonnance">
+                                        <option value="">Non</option>
+                                        <option value="1">Oui sur ordonnance</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInputPassword1">Code barre officiel</label>
-                                <input type="text" name="codebarre" value="{{medicament.codebarre}}" class="form-control" required placeholder="1233454363" />
+                                <label>Voies d'administartion du médicament</label>
+                                <input class="form-control" name="voies" required rows="5"></input>
+                            </div>
+                            <div class="form-group">
+                                <label>Description du médicament</label>
+                                <textarea class="form-control" name="description" rows="5"></textarea>
                             </div>
                         </div>
                         <div class="col-sm-4 text-center" style="padding-top: 5% ">
-                            <img style="width: 96%; height:200px" src="{{medicament.image.url}}" class="img-thumbnail logo">
+                            <img style="width: 96%; height:200px" src="" class="img-thumbnail logo">
                             <input class="hide" type="file" name="image" >
                             <button type="button" class="btn btn-xs btn-default btn_image" style="margin-top: 15% "><i class="fa fa-image"></i> Ajouter une image</button>
                         </div>
@@ -141,20 +193,22 @@
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" value="{{medicament.id}}"  name="id">
-                    <button type="button" class="btn btn-md btn-white close" data-dimdiss="modal" aria-hidden="true">Annuler</button>
                     <button type="submit" class="btn btn-md btn-success">Mettre à jour</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-{% endfor %}
+
 
 {% endblock "content" %}
 
 
 {% block "scriptjs" %}
 <script>
-    Gallery.init();
+    $(document).ready(function() {
+        TableManageDefault.init();
+        {% include "./medicaments.js" %}
+    });
 </script>
 {% endblock "scriptjs" %}

@@ -37,17 +37,12 @@ def save(request):
                 else:
                     datas["id"] = uuid.uuid4()
                     form = MyForm(datas, request.FILES)
-
+                print(form.__dict__)
                 if form.is_valid():
                     if 'image' in request.FILES and request.FILES["image"] != "":
                         image = request.FILES.get('image')
                         form.image = image
-
                     item = form.save()
-                    if modelform == "ClientForm":
-                        return JsonResponse({"status":True, "url" : reverse("boutique:clients:client", args=[item.id])})
-                    if modelform == "FournisseurForm":
-                        return JsonResponse({"status":True, "url" : reverse("fabrique:appros:fournisseur", args=[item.id])})
                     return JsonResponse({"status":True, "message": _("Opération effectuée avec succes !")})
                 
                 else:

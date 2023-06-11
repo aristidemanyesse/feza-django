@@ -12,4 +12,4 @@ class OfficineForm(ModelForm):
 class ResponsableOfficineForm(ModelForm):
     class Meta:
         model = ResponsableOfficine
-        fields = "__all__"
+        fields = ("fullname", "contact",)

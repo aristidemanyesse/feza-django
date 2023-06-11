@@ -5,6 +5,16 @@ from .models import*
 from django.contrib.admin import DateFieldListFilter
 # Register your models here.
 
+
+admin.site.register(ResponsableOfficine)
+class ResponsableOfficineAdmin(admin.ModelAdmin):
+    empty_value_display = '-'
+    date_hierarchy = 'created_at'
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+    )
+    list_display = ['fullname', "officine", "contact"]
+
 @admin.register(TypeOfficine)
 class TypeOfficineAdmin(admin.ModelAdmin):
     empty_value_display = '-'
@@ -34,11 +44,4 @@ class OfficineAdmin(admin.GISModelAdmin):
 
 
 
-@admin.register(ResponsableOfficine)
-class ResponsableOfficineAdmin(admin.ModelAdmin):
-    empty_value_display = '-'
-    date_hierarchy = 'created_at'
-    list_filter = (
-        ('created_at', DateFieldListFilter),
-    )
-    list_display = ['fullname', "officine", "contact"]
+

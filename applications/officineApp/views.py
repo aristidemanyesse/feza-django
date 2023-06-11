@@ -2,6 +2,7 @@ from django.shortcuts import render
 from annoying.decorators import render_to
 from officineApp.models import *
 import json
+from django.shortcuts import redirect, get_object_or_404
 from django.core.serializers import serialize
 # Create your views here.
 
@@ -43,9 +44,10 @@ def map(request):
 @render_to('officineApp/officine.html')
 def officine(request, id):
     if request.method == "GET":
-        officine = Officine.objects.get(id = id, deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        officine =  get_object_or_404(Officine, id = id, deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         ctx = {
-            "officine" : officine
+            "officine" : officine,
+            "datas" : [json.loads(serialize("geojson", [officine]))],
         }
         return ctx
 
