@@ -95,13 +95,23 @@ DATABASES = {
     #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
+    
+    # 'default': {
+    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+    #     'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
+    #     'PORT'      : os.getenv("DB_PORT", 3306),
+    #     'USER'      : os.getenv("DB_USER", "root"),
+    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+    #     'NAME'      : os.getenv("DB_NAME", "ipi"),
+    # },
+    
     'default': {
         'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
+        'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
         'PORT'      : os.getenv("DB_PORT", 3306),
-        'USER'      : os.getenv("DB_USER", "root"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
-        'NAME'      : os.getenv("DB_NAME", "ipi"),
+        'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
+        'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
     },
 }
 
@@ -140,12 +150,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+MEDIA_ROOT = os.path.join(BASE_DIR , "media"),
+MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
