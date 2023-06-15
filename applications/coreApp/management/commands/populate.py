@@ -30,18 +30,13 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
     
     def handle(self, *args, **options):
-        ProduitInOfficine.objects.filter().delete()
-        # for off in Officine.objects.all(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
-        #     test = off.lat
-        #     off.lat = off.lon
-        #     off.lon = test
-        #     off.save()
-        #     print(off)
-        
-        # for pro in  ProduitInOfficine.objects.filter().order_by("?")[:1600000]:
-        #     pro.stock_state = StockState.objects.get(etiquette = StockState.RUPTURE)
-        #     print(pro)
-        #     pro.save()
+        for officine in Officine.objects.all(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
+            for produit in Produit.objects.all(type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).order_by('?')[:1500]:
+                ProduitInOfficine.objects.create(
+                    officine = officine,
+                    produit = produit,
+                    stock_state = StockState.objects.get(etiquette = StockState.DISPONIBLE)
+                    )
             
        
                 
