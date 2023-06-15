@@ -31,7 +31,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         for officine in Officine.objects.all(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
-            for produit in Produit.objects.all(type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).order_by('?')[:1500]:
+            for produit in Produit.objects.all(type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).order_by('?')[:10000]:
                 ProduitInOfficine.objects.create(
                     officine = officine,
                     produit = produit,
