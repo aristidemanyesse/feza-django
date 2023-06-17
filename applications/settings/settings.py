@@ -97,23 +97,23 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     
-    'default': {
-        'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
-        'PORT'      : os.getenv("DB_PORT", 3306),
-        'USER'      : os.getenv("DB_USER", "root"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
-        'NAME'      : os.getenv("DB_NAME", "ipi"),
-    },
-    
     # 'default': {
     #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-    #     'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+    #     'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
     #     'PORT'      : os.getenv("DB_PORT", 3306),
-    #     'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
-    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
-    #     'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+    #     'USER'      : os.getenv("DB_USER", "root"),
+    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+    #     'NAME'      : os.getenv("DB_NAME", "ipi"),
     # },
+    
+    'default': {
+        'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+        'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+        'PORT'      : os.getenv("DB_PORT", 3306),
+        'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
+        'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+    },
 }
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
