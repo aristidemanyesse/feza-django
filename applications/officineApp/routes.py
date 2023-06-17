@@ -1,9 +1,17 @@
 
 from .schemas import *
 from .serializers import *
-import graphene
+import graphene, requests
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
 
+class OfficineDistanceType(graphene.ObjectType):
+    officine = graphene.String()
+    distance = graphene.Float()
+    route = graphene.String()
 
+    
+    
 class OfficineAppQuery(object):
     
     search_type_officine = TypeOfficineType.ListField(action=graphene.String(default_value="search_type_officine"))
@@ -17,6 +25,26 @@ class OfficineAppQuery(object):
     search_garde = GardeType.ListField(action=graphene.String(default_value="search_garde"))
     
     search_officine_de_garde = OfficineDeGardeType.ListField(action=graphene.String(default_value="search_officine_de_garde"))
+    
+    
+    search_officine_distance = graphene.List(OfficineDistanceType, id=graphene.String(), longitude=graphene.Float(), latitude=graphene.Float())
+    def resolve_officine_distance (root, info, id, longitude, latitude, **kwargs):
+        point = Point(longitude, latitude, srid=4326)
+        officine = Officine.objects.filter(id = id).annotate(distance=Distance('geometry', point)).first()
+        if officine is not None:
+            response = requests.get(url)
+            multilinestring = {}
+            data = response.json()
+            if data['code'] == 'Ok':
+                geometry = data['routes'][0]
+                geometry["type"] = "Feature"
+                multilinestring = json.dumps(geometry)
+            
+            data = {"officine": officine, "distance": round(officine.distance*100, 2)}
+            url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+            
+            return OfficineDistanceType(officine = officine.id, distance = officine.distance, route = json.dumps(multilinestring))
+
     
     
 

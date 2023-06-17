@@ -42,3 +42,25 @@ class ResponsableOfficineAdmin(admin.ModelAdmin):
         ('created_at', DateFieldListFilter),
     )
     list_display = ['fullname', "officine", "contact"]
+
+
+
+
+@admin.register(Garde)
+class GardeAdmin(admin.ModelAdmin):
+    empty_value_display = '-'
+    date_hierarchy = 'created_at'
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+    )
+    list_display = ['__str__', 'debut', "fin", "created_at"]
+
+
+@admin.register(OfficineDeGarde)
+class OfficineDeGardeAdmin(admin.ModelAdmin):
+    empty_value_display = '-'
+    date_hierarchy = 'created_at'
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+    )
+    list_display = ['id', 'garde', "officine", "created_at"]
