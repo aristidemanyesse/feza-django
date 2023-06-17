@@ -34,7 +34,7 @@ class ProduitAppQuery(object):
     def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
         point = Point(longitude, latitude, srid=4326)
         print(point)
-        officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 10000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 5000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         liste = []
         for officine in officines:
