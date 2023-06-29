@@ -1,7 +1,7 @@
 from django.contrib.gis import admin
 
 # Register your models here.
-from .models import*
+from .models import *
 from django.contrib.admin import DateFieldListFilter
 # Register your models here.
 
@@ -41,7 +41,7 @@ class ResponsableOfficineAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['fullname', "officine", "contact"]
+    list_display = ['__str__', "officine", "contact"]
 
 
 

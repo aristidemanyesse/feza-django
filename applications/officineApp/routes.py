@@ -46,6 +46,34 @@ class OfficineAppQuery(object):
             return OfficineDistanceType(officine = officine.id, distance = officine.distance, route = json.dumps(multilinestring))
 
     
+
+    search_officine_avialable = graphene.List(OfficineDistanceType, longitude=graphene.Float(), latitude=graphene.Float(), distance=graphene.Int(), circonscription=graphene.UUID())
+    def resolve_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
+        if distance > 0:
+            point = Point(longitude, latitude, srid=4326)
+            officines = Officine.objects.filter( geometry__distance_lte = (point, distance)).annotate(distance=Distance('geometry', point))
+        else:
+            officines = Officine.objects.filter(circonscription__id = circonscription)
+        
+        datas = []
+        for officine in officines:   
+            multilinestring = {"":""}
+            try:
+                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+                response = requests.get(url)
+                multilinestring = {}
+                data = response.json()
+                if data['code'] == 'Ok':
+                    geometry = data['routes'][0]
+                    geometry["type"] = "Feature"
+                    multilinestring = json.dumps(geometry)
+                
+                    data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
+                    datas.append(data)
+            except Exception as e:
+                print(f"Error generation routing for {officine.name}", e)
+                        
+        return datas 
     
 
 class OfficineAppMutation(object):

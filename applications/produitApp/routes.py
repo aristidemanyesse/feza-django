@@ -30,13 +30,20 @@ class ProduitAppQuery(object):
     search_assurance = AssuranceType.ListField(action=graphene.String(default_value="search_assurance"))
     
     
-    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, circonscription=graphene.String(), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
+    search_produits_avialable_in_officine = graphene.List(ProduitsAvialableInOfficineType, distance=graphene.Int(), circonscription=graphene.String(), produits=graphene.List(graphene.String, required=True), longitude=graphene.Float(), latitude=graphene.Float())
     def resolve_search_produits_avialable_in_officine(root, info, circonscription, produits,  longitude, latitude,  **kwargs):
         point = Point(longitude, latitude, srid=4326)
-        print(point)
-        officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, geometry__distance_lte = (point, 5000), type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
-        produits_in = Produit.objects.filter(deleted = False, id__in=produits)
+        officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        
+        distance = distance * 1000
+        print(distance, "***************")
+        if distance > 0:
+            officines = officines.filter( geometry__distance_lte = (point, 5000))
+        if circonscription is not None:
+            officines = officines.filter(circonscription__id = circonscription)
+            
         liste = []
+        produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         for officine in officines:
             pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
             pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
@@ -70,9 +77,12 @@ class ProduitAppQuery(object):
         return datas
     
     
+    
     class ProduitType(DjangoObjectType):
         class Meta:
             model = Produit
+            
+            
             
     class TypeProduitType(DjangoObjectType):
         class Meta:

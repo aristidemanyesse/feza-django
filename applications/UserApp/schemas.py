@@ -17,3 +17,32 @@ class UtilisateurType(DjangoSerializerType):
             "contact": ("exact", ),
             "is_valide": ("exact", ),
         }
+
+
+
+class DemandeType(DjangoSerializerType):
+    class Meta:
+        serializer_class = DemandeSerializer
+        description = " Type definition for a single Demande "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "utilisateur__id": ("exact",),
+            "officine__id": ("exact",),
+            "officine__circonscription__id": ("exact",),
+            "status": ("exact", ),
+        }
+
+
+class LigneDemandeType(DjangoSerializerType):
+    class Meta:
+        serializer_class = LigneDemandeSerializer
+        description = " Type definition for a single LigneDemande "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "demande__id": ("exact",),
+            "produit__id": ("exact",),
+            "status": ("exact", ),
+        }
+

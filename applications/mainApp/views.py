@@ -49,13 +49,15 @@ def deconnexion(request):
 def dashboard(request):
     if request.method == "GET":
         officines = Officine.objects.filter(deleted = False, type  = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        markers = json.loads(serialize("geojson", officines))
         produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
         users = Utilisateur.objects.filter(deleted = False)
-        markers = json.loads(serialize("geojson", officines))
+        demandes = Demande.objects.filter(deleted = False, created_at__date= datetime.today())
         ctx = {
             "officines": officines,
             "produits": produits,
             "users": users,
+            "demandes": demandes,
             "markers": markers
         }
         return ctx
