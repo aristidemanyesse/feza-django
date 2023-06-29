@@ -59,10 +59,19 @@ class Garde(BaseModel):
     debut = models.DateField(default="", null=True, blank=True)
     fin = models.DateField(default="", null=True, blank=True)
 
+    def __str__(self):
+        return "Garde du " + str(self.debut) + " au " + str(self.fin)
+
+    class Meta:
+        ordering = ("-created_at", "-debut",)
+
 
 class OfficineDeGarde(BaseModel):
     garde = models.ForeignKey(Garde, null = True, blank = True, on_delete= models.CASCADE, related_name="garde_officine")
     officine = models.ForeignKey(Officine, null = True, blank = True, on_delete= models.CASCADE, related_name="officine_garde")
+    
+    def __str__(self):
+        return "Garde de " + str(self.officine) + " pour " + str(self.garde)
 
 
 

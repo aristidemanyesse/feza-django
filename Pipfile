@@ -16,6 +16,8 @@ graphene-gis = "*"
 osm2geojson = "*"
 osmium = "*"
 geojson = "*"
+crontab = "*"
+django-crontab = "*"
 
 [dev-packages]
 

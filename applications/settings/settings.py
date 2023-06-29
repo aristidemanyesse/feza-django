@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "leaflet",
     'graphene_gis',
+    'django_crontab',
     "graphene_django",
     
     "coreApp",
@@ -150,11 +151,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-MEDIA_ROOT = os.path.join(BASE_DIR , "media"),
-MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -193,3 +196,9 @@ GRAPHENE = {
         'graphene_django_extras.ExtraGraphQLDirectiveMiddleware'
     ]
 }
+
+CRON_LOG_DIR = os.path.join(BASE_DIR, "logs", "garde1.log")
+CRONJOBS = [
+    # ('0 10 * * 5', 'officineApp.cron.create_garde', f'>> {os.path.join(BASE_DIR, "/logs/garde.log")}'),
+    ('*/1 * * * *', 'officineApp.cron.create_garde', f'>> {CRON_LOG_DIR}'),
+]

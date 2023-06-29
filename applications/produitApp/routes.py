@@ -54,7 +54,7 @@ class ProduitAppQuery(object):
             officine = elment["officine"]
             multilinestring = {"":""}
             try:
-                url = f"https://router.project-osrm.org/route/v1/car/{point.y},{point.x};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
                 print(url)
                 response = requests.get(url)
                 data = response.json()

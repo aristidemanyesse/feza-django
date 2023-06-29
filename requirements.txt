@@ -3,8 +3,10 @@ aniso8601==9.0.1
 asgiref==3.7.2
 certifi==2023.5.7
 charset-normalizer==3.1.0
+crontab==1.0.1
 django==4.1
 django-annoying==0.10.6
+django-crontab==0.7.1
 django-filter==22.1
 django-leaflet==0.29.0
 djangorestframework==3.14.0

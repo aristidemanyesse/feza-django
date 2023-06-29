@@ -65,5 +65,6 @@ class OfficineDeGardeType(DjangoSerializerType):
         serializer_class = OfficineDeGardeSerializer
         filter_fields = {
             "officine__id": ("exact",),
+            "officine__circonscription__id": ("exact",),
             "garde__id": ("exact", )
         }
