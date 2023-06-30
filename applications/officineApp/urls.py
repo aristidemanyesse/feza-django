@@ -12,4 +12,6 @@ urlpatterns = [
     # path('fixtures/test/', views.features_test, name="features_test"),
     # path('fixtures/<int:year>/<int:month>/<int:day>/', views.fixtures, name="fixtures"),
     path('officine/<uuid:id>/', views.officine, name="officine"),
+    path('demandes/<uuid:id>/', views.demandes, name="demandes"),
+
 ]

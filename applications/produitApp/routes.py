@@ -36,7 +36,6 @@ class ProduitAppQuery(object):
         officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(deleted = False, type=TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         
         distance = distance * 1000
-        print(distance, "***************")
         if distance > 0:
             officines = officines.filter( geometry__distance_lte = (point, 5000))
         if circonscription is not None:
@@ -51,7 +50,6 @@ class ProduitAppQuery(object):
             if ratio == 0 :
                 continue
             
-            print(officine)
             pros = [pro.produit.id for pro in pro_offs]
             liste.append({"officine": officine, "produits": pros, "ratio": ratio, "distance": round(officine.distance*100, 2)})
         
@@ -62,7 +60,6 @@ class ProduitAppQuery(object):
             multilinestring = {"":""}
             try:
                 url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
-                print(url)
                 response = requests.get(url)
                 data = response.json()
                 if data['code'] == 'Ok':

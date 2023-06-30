@@ -1,5 +1,6 @@
 
 {% extends 'layout/base.html' %}
+{% load static %}
 
 {% block "content" %}
 <div id="content" class="content">
@@ -12,112 +13,75 @@
     <!-- begin page-header -->
     <h1 class="page-header">Liste des Médicaments </h1>
     <!-- end page-header -->
-    
+
+
     <div class="row">
-        <div id="options" class="col-sm-10 m-b-10">
-            <span class="gallery-option-set" id="filter" data-option-key="filter">
-                <a href="#show-all" class="btn btn-default btn-xs active" data-option-value="*">
-                    Tous voir
-                </a>
-                {% for type in types %}
-                <a href="#{{type.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{type.etiquette}}">
-                    {{type.name}}
-                </a>
-                {% endfor %}
-                <a href="#ordonnance" class="btn btn-default btn-xs" data-option-value=".ordonnance">
-                    Sur ordonnance
-                </a>
-                {% for stock in stocks %}
-                <a href="#{{stock.etiquette}}" class="btn btn-default btn-xs" data-option-value=".{{stock.etiquette}}">
-                    {{stock.name}}
-                </a>
-                {% endfor %}
-            </span>
-        </div>
-        <div class="col-sm-2 text-right">
-            {% comment %} <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-medicament"><i class="fa fa-plus"></i> Ajouter</button> {% endcomment %}
-        </div>
-    </div>
-    <div id="gallery" class="gallery">
-        {% for item in prodoffs %}
-        <div class="image {{item.produit.type.etiquette}} {{item.stock_state.etiquette}} {% if item.produit.only_ordonnance %}ordonnance{% endif %} ">
-            <div class="image-inner">
-                <img src="{{item.produit.image.url}}" alt="" />
-                <p class="image-caption">
-                    #{{item.produit.codebarre}}
-                </p>
-            </div>
-            <div class="image-info">
-                <h4 class="title">{{item.produit.name}}</h4>
-                <div>
-                    <div class="pull-right">
-                        {% if item.produit.only_ordonnance %}
-                        <label class="label label-primary">Sur ordonnance</label>
-                        {% endif %}
+        <!-- begin col-12 -->
+        <div class="col-md-12">
+            <!-- begin panel -->
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
                     </div>
-                    <div class="rating pull-left">
-                        <div class="btn-group">
-                            {% for state in stocks %}
-                                {% if state.etiquette == item.stock_state.etiquette %}
-                                    <a id="{{state.id}}" class="btn btn-{{state.classe}} btn-xs">{{state}}</a>
-                                    <button type="button" class="btn btn-{{state.classe}} btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                {% else %}
-                                    <a id="{{state.id}}" class="hide" class="btn btn-{{state.classe}} btn-xs">{{state}}</a>
-                                    <button type="button" class="btn btn-{{state.classe}} btn-xs dropdown-toggle hide" data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                {% endif %}
+                    <h4 class="panel-title">Médicaments en stock - Liste</h4>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr class="text-uppercase">
+                                <th>#</th>
+                                <th>Code barre</th>
+                                <th>Nom officiel</th>
+                                <th>type</th>
+                                <th>ordonnance</th>
+                                <th>forme</th>
+                                <th>voies d'administration</th>
+                                <th>Disponibilité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in prodoffs %}
+                                <tr class="odd gradeX">
+                                    <td><img src="{{item.produit.image.url}}" style="width: 40px"></td>
+                                    <td>{{ item.produit.codebarre }}</td>
+                                    <td class="text-bold">{{ item.produit.name }}</td>
+                                    <td>{{ item.produit.type }}</td>
+                                    <td>{{ item.produit.only_ordonnance }}</td>
+                                    <td>{{ item.produit.forme }}</td>
+                                    <td>{{ item.produit.voies }}</td>
+                                    <td><button onclick="indisponible('{{item.id }}')" class="btn btn-danger btn-sm btn-rounded"><i class="fa fa-close"></i> Plus en stock</button></td>
+                                </tr>
                             {% endfor %}
-                            <ul class="dropdown-menu" role="menu" id="{{item.id}}">
-                                {% for state in stocks %}
-                                    {% if state.etiquette != item.stock_state.etiquette %}
-                                        <li id="{{state.id}}" onclick="changeState('{{item.id}}', '{{state.id}}')"><a href="#">{{state.name}}</a></li>
-                                    {% else %}
-                                        <li id="{{state.id}}" class="hide" onclick="changeState('{{item.id}}', '{{state.id}}')"><a href="#">{{state.name}}</a></li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+                            <tr>
+                                <td colspan="8" class="text-center"> 
+                                    =+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+===
+                                </td>
+                            </tr>
+                            {% for produit in produits %}
+                                <tr class="odd gradeX">
+                                    <td><img src="{{produit.image.url}}" style="width: 40px"></td>
+                                    <td>{{ produit.codebarre }}</td>
+                                    <td class="text-bold">{{ produit.name }}</td>
+                                    <td>{{ produit.type }}</td>
+                                    <td>{{ produit.only_ordonnance }}</td>
+                                    <td>{{ produit.forme }}</td>
+                                    <td>{{ produit.voies }}</td>
+                                    <td><button onclick="disponible('{{request.officine.id }}', '{{ produit.id }}')" class="btn btn-success btn-sm btn-rounded"><i class="fa fa-check"></i> Maintenant disponible</button></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="clearfix"></div><br>
-                <div class="desc">{{item.produit.description}}</div>
             </div>
+            <!-- end panel -->
         </div>
-        {% endfor %}
+        <!-- end col-12 -->
+    </div>
 
 
-        {% for produit in produits %}
-        <div class="image {{produit.type.etiquette}} {% if produit.only_ordonnance %}ordonnance{% endif %} ">
-            <div class="image-inner">
-                <img src="{{produit.image.url}}" alt="" />
-                <p class="image-caption">
-                    #{{produit.codebarre}}
-                </p>
-            </div>
-            <div class="image-info">
-                <h4 class="title">{{produit.name}}</h4>
-                <div>
-                    <div class="pull-right">
-                        {% if produit.only_ordonnance %}
-                        <label class="label label-primary">Sur ordonnance</label>
-                        {% endif %}
-                    </div>
-                    <div class="rating pull-left">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-xs" data-toggle="dropdown">
-                                <i class="check"></i> maintenant disponible
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="clearfix"></div><br>
-                <div class="desc">{{produit.description}}</div>
-            </div>
-        </div>
-        {% endfor %}
+
     </div>
 </div>
 
@@ -126,15 +90,10 @@
 
 {% block "scriptjs" %}
 <script>
-    Gallery.init();
-    {% include "./medicaments_officine.js" %}
+    $(document).ready(function() {
+        TableManageDefault.init();
+        {% include "./medicaments_officine.js" %}
+    });
 </script>
 {% endblock "scriptjs" %}
-
-
-{% block "style" %}
-.hide{
-    display: hidden;
-}
-{% endblock "style" %}
 

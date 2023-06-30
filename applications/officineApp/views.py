@@ -2,6 +2,7 @@ from django.shortcuts import render
 from annoying.decorators import render_to
 from officineApp.models import *
 import json
+from django.shortcuts import redirect, get_object_or_404
 from django.core.serializers import serialize
 # Create your views here.
 
@@ -43,9 +44,10 @@ def map(request):
 @render_to('officineApp/officine.html')
 def officine(request, id):
     if request.method == "GET":
-        officine = Officine.objects.get(id = id, deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        officine =  get_object_or_404(Officine, id = id, deleted = False, type =TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         ctx = {
-            "officine" : officine
+            "officine" : officine,
+            "datas" : [json.loads(serialize("geojson", [officine]))],
         }
         return ctx
 
@@ -57,5 +59,23 @@ def responsables(request):
         medicaments = Officine.objects.filter()
         ctx = {
             "medicaments" : medicaments
+        }
+        return ctx
+    
+    
+
+    
+    
+
+@render_to('officineApp/demandes.html')
+def demandes(request, id):
+    if request.method == "GET":
+        officine = get_object_or_404(Officine, pk=id)
+        demandes = officine.officine_demande.filter(deleted = False).order_by("-created_at")
+        # produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).exclude(id__in = prodoffs.values_list('produit', flat = True)).order_by("name")
+        ctx = {
+            "demandes" : demandes,
+            # "produits": produits,
+           
         }
         return ctx

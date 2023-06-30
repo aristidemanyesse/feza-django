@@ -1,3 +1,4 @@
+import random
 from django.contrib.gis.db import models
 from coreApp.models import BaseModel
 # Create your models here.
@@ -32,8 +33,8 @@ class Officine(BaseModel):
     localisation    = models.TextField(default="", null=True, blank=True)
     geometry        = models.PointField(default="", srid=4326, blank=True)
     geometry_json   = models.TextField(default="", null=True, blank=True)
-    lon             = models.FloatField(default=0.0)
-    lat             = models.FloatField(default=0.0)
+    lon             = models.FloatField(default=0.0, null=True, blank=True)
+    lat             = models.FloatField(default=0.0, null=True, blank=True)
     contact         = models.CharField(max_length=255, null=True, blank=True)
     contact2        = models.CharField(max_length=255, null=True, blank=True)
     type            = models.ForeignKey(TypeOfficine, null = True, blank = True, on_delete= models.CASCADE, related_name="type_officine")
@@ -48,12 +49,10 @@ class Officine(BaseModel):
 
 
 class ResponsableOfficine(User, BaseModel):
-    contact = models.CharField(max_length=255)
+    fullname = models.CharField(max_length=255, null = True, blank = True,)
+    contact = models.CharField(max_length=255, null = True, blank = True,)
     is_never_connected = models.BooleanField(default=True)
     officine = models.ForeignKey(Officine, null = True, blank = True, on_delete= models.CASCADE, related_name="officine_responsable")
-
-    def fullname(self):
-        return self.first_name + " " + self.last_name
 
 
 class Garde(BaseModel):
@@ -81,13 +80,26 @@ class OfficineDeGarde(BaseModel):
 
 @signals.pre_save(sender=Officine)
 def sighandler(instance, **kwargs):
-    instance.geometry = Point(instance.lat, instance.lon)
-    # if instance.geometry is None:
-    #     instance.geometry = Point(instance.lat, instance.lon)
-    # else:
-    #     instance.lat = instance.geometry.x
-    #     instance.lon = instance.geometry.y
-    instance.geometry_json = instance.geometry.geojson
+    if instance.geometry is None:
+        instance.geometry = Point(instance.lat, instance.lon)
+        instance.geometry_json = instance.geometry.geojson
+
+
+@signals.post_save(sender=Officine)
+def sighandler(instance, created, **kwargs):
+    if created:
+        code = "ipi"
+        for i in range(9):
+            code += str(random.randint(0,9))        
+        respo = ResponsableOfficine.objects.create(
+            officine = instance,
+            fullname = "...",
+            username = code,
+            contact = ""
+        )
+        respo.set_password("ipipass")
+        respo.save()
+        
 
 
 

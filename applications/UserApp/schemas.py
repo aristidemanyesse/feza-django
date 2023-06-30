@@ -28,9 +28,9 @@ class DemandeType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "utilisateur__id": ("exact",),
+            "status": ("exact", ),
             "officine__id": ("exact",),
             "officine__circonscription__id": ("exact",),
-            "status": ("exact", ),
         }
 
 
@@ -42,6 +42,31 @@ class LigneDemandeType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "demande__id": ("exact",),
+            "produit__id": ("exact",),
+            "status": ("exact", ),
+        }
+
+
+class ReponseType(DjangoSerializerType):
+    class Meta:
+        serializer_class = ReponseSerializer
+        description = " Type definition for a single Reponse "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "demande__id": ("exact",),
+            "demande__officine__id": ("exact",),
+        }
+
+
+class LigneReponseType(DjangoSerializerType):
+    class Meta:
+        serializer_class = LigneReponseSerializer
+        description = " Type definition for a single LigneReponse "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "reponse__id": ("exact",),
             "produit__id": ("exact",),
             "status": ("exact", ),
         }

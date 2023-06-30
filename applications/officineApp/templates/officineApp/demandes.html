@@ -1,0 +1,98 @@
+
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block "content" %}
+<div id="content" class="content">
+    <!-- begin breadcrumb -->
+    <ol class="breadcrumb pull-right">
+        <li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord </a></li>
+        <li class="active">demandes</li>
+    </ol>
+    <!-- end breadcrumb -->
+    <!-- begin page-header -->
+    <h1 class="page-header">Liste des demandes </h1>
+    <!-- end page-header -->
+
+
+    <div class="row">
+        <!-- begin col-12 -->
+        <div class="col-md-12">
+            <!-- begin panel -->
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                    </div>
+                    <h4 class="panel-title">demandes en stock - Liste</h4>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr class="text-uppercase">
+                                <th>Date</th>
+                                <th>ordonnance</th>
+                                <th>Produits</th>
+                                <th>commentaire</th>
+                                <th>Etat</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in demandes %}
+                                <tr class="odd gradeX">
+                                    <td>{{ item.created_at }}</td>
+                                    <td>
+                                        <a href="{{ item.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                            <img src="{{item.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
+                                        </a>
+                                    </td>
+                                    <td>{{item.demande_lignes.filter.count}} médicaments</td>
+                                    <td>{{ item.commentaire }}</td>
+                                    <td>
+                                        {% if not item.status %}
+                                            <label class="label label-warning">En attente</label>
+                                        {% else %}
+                                            <label class="label label-success">Validé</label>
+                                        {% endif %}  
+                                    </td>
+                                    <td>
+                                        {% if not item.status %}
+                                        <button onclick="indisponible('{{item.id }}')" class="btn btn-default btn-sm btn-rounded"><i class="fa fa-close"></i> Traiter la demande</button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not item.status %}
+                                        <button onclick="delete_password('Demande', '{{demande.id}}')" class="btn btn-danger btn-sm btn-rounded"><i class="fa fa-trash"></i></button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- end panel -->
+        </div>
+        <!-- end col-12 -->
+    </div>
+
+
+
+    </div>
+</div>
+
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+<script>
+    $(document).ready(function() {
+        TableManageDefault.init();
+        {% comment %} {% include "./medicaments_officine.js" %} {% endcomment %}
+    });
+</script>
+{% endblock "scriptjs" %}
+

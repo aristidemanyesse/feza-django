@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load static %}
+{% load myfilters %}
 
 {% block "content" %}
 
@@ -12,7 +13,7 @@
 	</ol>
 	<!-- end breadcrumb -->
 	<!-- begin page-header -->
-	<h1 class="page-header"><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 30px; margin-top: -5px"> {{officine.name}} <small>{{officine.localisation}}</small></h1>
+	<h1 class="page-header"><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 30px; margin-top: -5px"> {{officine.name}} </h1>
 	<!-- end page-header -->
 	<!-- begin profile-container -->
 	<div class="profile-container">
@@ -22,13 +23,13 @@
 			<div class="profile-left">
 				<!-- begin profile-image -->
 				<div class="profile-image">
-					<img src="assets/img/profile-cover.jpg" />
+					<img src="{% static "dist/img/icons/pharma.png" %}" style="height:95%">
 					<i class="fa fa-user hide"></i>
 				</div>
 				<!-- end profile-image -->
-				<div class="m-b-10">
+				{% comment %} <div class="m-b-10">
 					<a href="#" class="btn btn-warning btn-block btn-sm">Changer les photos</a>
-				</div>
+				</div> {% endcomment %}
 				<!-- begin profile-highlight -->
 				{% comment %} <div class="profile-highlight">
 					<h4><i class="fa fa-cog"></i> Only My Contacts</h4>
@@ -80,7 +81,7 @@
 										</tr>
 										<tr class="highlight">
 											<td class="field">Coordonnées</td>
-											<td><a href="#">{{officine.coordinates}}</a></td>
+											<td>{{officine.geometry}}</td>
 										</tr>
 										<tr class="divider">
 											<td colspan="2"></td>
@@ -88,25 +89,44 @@
 									</tbody>
 								</table>
 
-								<table class="table table-">
-									<thead>
-										<tr>
-											<th colspan="2">
-												<h4> Micheal Meyer <small>Lorraine Stokes</small></h4>
-											</th>
-										</tr>
-									</thead>
-									<tbody class="text-left">
-										<tr>
-											<td class="field"></td>
-											<td><a href="#" class="btn btn-warning btn-block btn-sm">Modifier les informations</a></td>
-										</tr>
-									</tbody>
-								</table>
+								{% for respo in officine.officine_responsable.all%}
+									<table class="table table-">
+										<thead>
+											<tr>
+												<th colspan="2">
+													<h4> {{respo.fullname}} </h4>
+												</th>
+											</tr>
+										</thead>
+										<tbody class="text-left">
+											<tr>
+												<td class="field">Contact</td>
+												<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{officine.contact}}</td>
+											</tr>
+											<tr>
+												<td class="field">identifiant</td>
+												{% if respo.is_never_connected %}
+												<td>{{respo.username}}</td>
+												{% else %}
+												<td> **********</td>
+												{% endif %}
+											</tr>
+											<tr>
+												<td class="field">Mot de passe</td>
+												<td>ipipass</td>
+											</tr>
+											<tr>
+												<td class="field"></td>
+												<td><button class="btn btn-warning btn-block btn-sm" data-toggle="modal" data-target="#modal-responsable{{respo.id}}">Modifier les informations</button></td>
+											</tr>
+										</tbody>
+									</table>
+								{% endfor %}
 							</div>
 							<div class="col-sm-6" style="height:500px; border: solid 1px red">
 								<div class="map-min" style="">
-									<div id="google-map-default" style="height:490px"></div>
+									{{ datas|json_script:"cirs-data" }}	
+            						<div id="mymap" style="height:490px"></div>
 								</div>
 							</div>
 						</div>
@@ -123,20 +143,73 @@
 	<!-- end profile-container -->
 </div>
 
+
+
+{% for respo in officine.officine_responsable.all%}
+<div class="modal fade" id="modal-responsable{{respo.id}}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title text-bold">Resposable de {{officine.name}}</h4>
+            </div>
+            <form id="formResponsable" class="formShamman" classname="ResponsableOfficineForm" enctype="multipart/form-data" method="POST">
+                <div class="modal-body" style="padding: 5% ">
+                    <div class="">
+						<div class="form-group">
+							<label for="exampleInputEmail1">Nom complet du responsable</label>
+							<input type="text" name="fullname" value="{{respo.fullname}}" class="form-control" required placeholder="..." />
+						</div><br>
+						<div class="form-group">
+							<label for="exampleInputPassword1">Contacts</label>
+							<input type="text" name="contact" value="{{respo.contact}}" class="form-control" required placeholder="0120020263" />
+						</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden"  name="id" value="{{respo.id}}">
+                    <button type="submit" class="btn btn-md btn-success">Mettre à jour les informations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
 {% endblock "content" %}
 
-
 {% block "scriptjs" %}
-MapGoogle.init();
-{% endblock "scriptjs" %}
+	<script>
+		$(document).ready(function() {
+			console.log("--------------------")
+			console.log('{{officine.geometry.x|commaToDot}}', '{{officine.geometry.y|commaToDot}}')
 
-<style>
-	.map-min{
-		position:absolute;
-		top:5px !important;
-		bottom:5px;
-		left:0px !important;
-		right:0 !important;
-		z-index:0
-	}
-</style>
+			var mymap = L.map('mymap').setView([{{officine.geometry.x|commaToDot}}, {{officine.geometry.y|commaToDot}}], 16);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				maxZoom: 22,
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(mymap);
+		
+			var customIcon = L.icon({
+				iconUrl: "{% static 'dist/img/icons/pharmacy.png' %}",
+				iconSize: [24, 24],
+				iconAnchor: [16, 16],
+				popupAnchor: [0, -16]
+			});
+		
+		
+		
+			var officine = JSON.parse(document.getElementById("cirs-data").textContent)[0]
+			L.geoJSON(officine, {
+				pointToLayer: function (feature, latlng) {
+				return L.marker(latlng, { icon: customIcon });
+				},
+			}).addTo(mymap);
+
+		
+		});
+	</script>
+{% endblock "scriptjs" %}

@@ -47,6 +47,9 @@ def deconnexion(request):
         
 @render_to('mainApp/dashboard.html')
 def dashboard(request):
+    if not request.user.is_superuser:
+        return redirect("mainApp:dashboard_officine", request.officine.id)
+        
     if request.method == "GET":
         officines = Officine.objects.filter(deleted = False, type  = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
         markers = json.loads(serialize("geojson", officines))
@@ -62,7 +65,23 @@ def dashboard(request):
         }
         return ctx
         
+
+
+
         
+@render_to('mainApp/dashboard_officine.html')
+def dashboard_officine(request, id):
+    if request.method == "GET":
+        officine = get_object_or_404(Officine, pk=id)
+        demandes = officine.officine_demande.filter(deleted = False, status = False, created_at__date= datetime.today())
+        produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
+        ctx = {
+            "officine": officine,
+            "produits": produits,
+            "demandes": demandes,
+        }
+        return ctx
+          
         
 # @render_to('fixtureApp/match.html')
 # def match(request, id):

@@ -21,18 +21,22 @@ class TypeProduit(BaseModel):
     
     name = models.CharField(max_length=255,default="")
     etiquette = models.CharField(max_length=255,default="")
+    
+    class Meta:
+        ordering = ("name",)
 
 
 class Produit(BaseModel):
-    name              = models.CharField(max_length=255,default="")
-    cis               = models.CharField(max_length=255, default="")
-    forme             = models.CharField(max_length=255, default="")
-    voies             = models.CharField(max_length=255, default="")
-    description       = models.TextField(default="")
+    name              = models.CharField(max_length=255, default="")
+    cis               = models.CharField(max_length=255, default="", null = True, blank = True,)
+    forme             = models.CharField(max_length=255, default="", null = True, blank = True,)
+    voies             = models.CharField(max_length=255, default="", null = True, blank = True,)
+    description       = models.TextField(default="", null = True, blank = True,)
     codebarre         = models.CharField(max_length=255, unique=True)
+    price         = models.IntegerField(null = True, blank = True)
     only_ordonnance   = models.BooleanField(default=False)
     type              = models.ForeignKey(TypeProduit, null = True, blank = True, on_delete= models.CASCADE, related_name="type_produit")
-    image = models.ImageField(max_length = 255, upload_to = "media/images/produits/", default="media/images/produits/default.jpg", null = True, blank=True)
+    image             = models.ImageField(max_length = 255, upload_to = "media/images/produits/", default="media/images/produits/default.jpg", null = True, blank=True)
     class Meta:
         ordering = ("name",)
 

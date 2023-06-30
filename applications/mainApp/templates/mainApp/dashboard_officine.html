@@ -1,0 +1,240 @@
+{% extends 'layout/base.html' %}
+{% load myfilters %}
+{% load static %}
+{% load leaflet_tags %}
+
+
+{% block "content" %}
+<div id="content" class="content">
+    <!-- begin breadcrumb -->
+    <ol class="breadcrumb pull-right">
+        <li class="active">Tableau de bord</li>
+    </ol>
+    <!-- end breadcrumb -->
+    <!-- begin page-header -->
+    <h1 class="page-header">Tableau de bord <small>IPI, Ici les Pharmacies Ivoiriennes</small></h1>
+    <!-- end page-header -->
+
+    
+    <!-- begin row -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="widget-chart with-sidebar bg-black">
+                <div class="widget-chart-content">
+                    <h4 class="chart-title">
+                        Graphisme de comparaison
+                        <small>Comparaison entre le nombre d'utilisateurs et le nombre de requettes effectuées</small>
+                    </h4>
+                    <div id="visitors-line-chart" class="morris-inverse" style="height: 260px;"></div>
+                </div>
+                <div class="widget-chart-sidebar bg-black-darker">
+                    <div class="chart-number">
+                        {{users|length|start0}}
+                        <small>utilisateurs cette semaine</small>
+                    </div>
+                    <div id="visitors-donut-chart" style="height: 160px"></div>
+                    <ul class="chart-legend">
+                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> 34.0% <span>ont validé</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> 56.0% <span>en attente</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-inverse" data-sortable-id="index-1">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        Cartographie rapide
+                    </h4>
+                </div>
+                <div class="">
+                    {{ markers|json_script:"markers-data" }}
+                    <div id="mymap"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+    
+
+    <h2 class="page-header">Tableau de bord <small>IPI, Ici les Pharmacies Ivoiriennes</small></h2>
+
+    <!-- begin row -->
+    <div class="row">
+        {% for demande in demandes %}
+        <div class="col-md-4">
+            <div class="panel panel-inverse" data-sortable-id="index-8">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-sm btn-icon btn-circle btn-danger" onclick="delete_password('Demande', '{{demande.id}}')" ><i class="fa fa-times"></i></a>
+                    </div>
+                    <h4 class="panel-title">{{demande.created_at}}</h4>
+                </div>
+                <div class="panel-body" id="{{demande.id}}">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                        {% for produit in produits %}
+                                            <option value="{{produit.id}}">{{produit.name}}</option>
+                                        {% endfor %}'{{demande.id}}'
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button class="btn btn-success m-r-5" onclick="ajouter('{{demande.id}}')"> Ajouter</button>
+                                </div>
+                            </div>
+
+                            <table class="table table-striped">
+                                <tbody>
+                                    {% for item in demande.demande_lignes.all %}
+                                        <tr class="odd gradeX" id="{{item.produit.id}}">
+                                            <td><img src="{{ item.produit.image.url }}" style="width: 20px"></td>
+                                            <td style="font-size:11px; font-weight:bold">{{ item.produit.name }}</td>
+                                            <td>
+                                                <input type="checkbox" class="form-control input-xs" value="" />
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <p>{{demande.commentaire}}</p>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <a href="{{ demande.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                <img src="{{ demande.ordonnance.url }}"   style="width: 100%"  alt="ordonnance" />
+                            </a>
+                            <br><br>
+                            <span>ordonnance</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <textarea class="form-control" rows="3" name="comment"></textarea>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <button class="btn btn-success m-r-5" onclick="validerDemande('{{demande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- end row -->
+
+
+</div>
+
+<style>
+#mymap{
+    height: 300px !important;
+}
+
+
+.leaflet-popup {
+    width: 200px;
+  }
+  .leaflet-popup-content {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .leaflet-popup-content-wrapper {
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+  }
+  .leaflet-popup-tip-container {
+    width: 40px;
+    height: 20px;
+    position: absolute;
+    left: 50%;
+    margin-left: -20px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .leaflet-popup-tip {
+    width: 17px;
+    height: 17px;
+    padding: 1px;
+    margin: -10px auto 0;
+    transform: rotate(45deg);
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #999;
+  }
+  .leaflet-popup-content h3 {
+    margin: 0 0 0.5em;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .leaflet-popup-content p {
+    margin: 0;
+  }
+  .leaflet-popup-content a {
+    display: block;
+    text-align: center;
+    margin-top: 1em;
+    color: #fff;
+    background-color: #3388ff;
+    border: none;
+    border-radius: 3px;
+    padding: 0.5em 1em;
+    text-decoration: none;
+  }
+</style>
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+    <script>
+        $(document).ready(function() {
+            {% include "./dashboard_officine.js" %}
+            DashboardV2.init();
+            FormPlugins.init();
+
+
+            var mymap = L.map('mymap').setView([7.561891, -5.376317], 6);
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 22,
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(mymap);
+    
+            var customIcon = L.icon({
+                iconUrl: "{% static 'dist/img/icons/Rond_rouge.png' %}",
+                iconSize: [7, 7],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+    
+            const markers = JSON.parse(document.getElementById("markers-data").textContent)
+            console.log(markers["features"])
+            var markersLayer = L.markerClusterGroup();
+    
+            for (var item of markers["features"]) {
+                console.log(item)
+                var marker = L.geoJSON(item, {
+                    pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, { icon: customIcon });
+                    },
+                }).addTo(mymap);
+                markersLayer.addLayer(marker);
+                var popupContent = '<div style="padding: 1em;">' +
+                    '<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
+                    '<p style="margin: 0;">Contenu du popup</p>' +
+                    '</div>';
+                marker.bindPopup(popupContent);
+            }
+            mymap.addLayer(markersLayer);
+        });
+    </script>
+{% endblock "scriptjs" %}

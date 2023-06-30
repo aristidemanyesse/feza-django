@@ -35,6 +35,7 @@
                                     <th>Type</th>
                                     <th>Circonscription</th>
                                     <th>lieu</th>
+                                    <th>Responsables</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -46,6 +47,13 @@
                                         <td>{{ officine.type }}</td>
                                         <td>{{ officine.circonscription }}</td>
                                         <td>{{ officine.localisation }}</td>
+                                        <td>
+                                            <ul>
+                                                {% for responsable in officine.officine_responsable.all %}
+                                                <li> {{responsable}} </li>
+                                                {% endfor %}
+                                            </ul> 
+                                        </td>
                                         <td><a href="{% url 'officineApp:officine' officine.id %}" class="btn btn-white btn-xs btn-rounded"><i class="fa fa-eye"></i> Voir</a></td>
                                     </tr>
                                 {% endfor %}
@@ -65,5 +73,9 @@
 
 
 {% block "scriptjs" %}
-TableManageDefault.init();
+<script>
+    $(document).ready(function() {
+        TableManageDefault.init();
+    });
+</script>
 {% endblock "scriptjs" %}

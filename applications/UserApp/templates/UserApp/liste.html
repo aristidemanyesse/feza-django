@@ -46,7 +46,7 @@
                                         <td>{{ utilisateur.circonscription }}</td>
                                         <td>{{ utilisateur.contact }}</td>
                                         <td>{% if utilisateur.is_valide %} <i class="fa fa-check"></i>{% else %} en attente {% endif %}</td>
-                                        <td><a href="{% url 'UserApp:utilisateur' utilisateur.id %}" class="btn btn-white btn-xs btn-rounded"><i class="fa fa-eye"></i> Voir</a></td>
+                                        {% comment %} <td><a href="{% url 'UserApp:utilisateur' utilisateur.id %}" class="btn btn-white btn-xs btn-rounded"><i class="fa fa-eye"></i> Voir</a></td> {% endcomment %}
                                     </tr>
                                 {% endfor %}
                                 
@@ -65,5 +65,9 @@
 
 
 {% block "scriptjs" %}
-TableManageDefault.init();
+<script>
+    $(document).ready(function() {
+        TableManageDefault.init();
+    });
+</script>
 {% endblock "scriptjs" %}

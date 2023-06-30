@@ -6,8 +6,8 @@
 	<!-- begin breadcrumb -->
 	<ol class="breadcrumb pull-right">
 		<li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord</a></li>
-		<li><a href="{% url 'officineApp:liste' %}">Officines</a></li>
-		<li class="active">Cartographies des officines</li>
+		<li><a href="{% url 'UserApp:liste' %}">utilisateurs</a></li>
+		<li class="active">Cartographies des utilisateurs</li>
 	</ol>
 	<!-- end breadcrumb -->
 	<!-- begin page-header -->
@@ -69,10 +69,9 @@
 		
 			var layers = {}
 			const cirs = JSON.parse(document.getElementById("cirs-data").textContent)
-			console.log(cirs)
 			for (let zone of cirs) {
 				var markersLayer = L.markerClusterGroup();
-				for (var item of zone["officines"]["features"]) {
+				for (var item of zone["utilisateurs"]["features"]) {
 					console.log(item)
 					var marker = L.geoJSON(item, {
 						pointToLayer: function (feature, latlng) {

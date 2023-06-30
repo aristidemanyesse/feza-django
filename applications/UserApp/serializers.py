@@ -17,3 +17,14 @@ class LigneDemandeSerializer(ModelSerializer):
     class Meta:
         model = LigneDemande
         fields = '__all__'
+
+
+class ReponseSerializer(ModelSerializer):
+    class Meta:
+        model = Reponse
+        fields = '__all__'
+
+class LigneReponseSerializer(ModelSerializer):
+    class Meta:
+        model = LigneReponse
+        fields = '__all__'

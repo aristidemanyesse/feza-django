@@ -1,0 +1,250 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load myfilters %}
+
+{% block "content" %}
+
+<div id="content" class="content">
+	<!-- begin breadcrumb -->
+	<ol class="breadcrumb pull-right">
+		<li><a href="{% url 'mainApp:dashboard' %}">Tableau de bord</a></li>
+		<li><a href="{% url 'UserApp:liste' %}">utilisateurs</a></li>
+		<li class="active">{{utilisateur.name}}</li>
+	</ol>
+	<!-- end breadcrumb -->
+	<!-- begin page-header -->
+	<h1 class="page-header"><img src="{% static "dist/img/icons/pharma.png" %}" style="width: 30px; margin-top: -5px"> {{utilisateur.name}} </h1>
+	<!-- end page-header -->
+	<!-- begin profile-container -->
+	<div class="profile-container">
+		<!-- begin profile-section -->
+		<div class="profile-section">
+			<!-- begin profile-left -->
+			<div class="profile-left">
+				<!-- begin profile-image -->
+				<div class="profile-image">
+					<img src="{% static "dist/img/icons/pharma.png" %}" style="height:95%">
+					<i class="fa fa-user hide"></i>
+				</div>
+				<!-- end profile-image -->
+				{% comment %} <div class="m-b-10">
+					<a href="#" class="btn btn-warning btn-block btn-sm">Changer les photos</a>
+				</div> {% endcomment %}
+				<!-- begin profile-highlight -->
+				{% comment %} <div class="profile-highlight">
+					<h4><i class="fa fa-cog"></i> Only My Contacts</h4>
+					<div class="checkbox m-b-5 m-t-0">
+						<label><input type="checkbox" /> Show my timezone</label>
+					</div>
+					<div class="checkbox m-b-0">
+						<label><input type="checkbox" /> Show i have 14 contacts</label>
+					</div>
+				</div> {% endcomment %}
+				<!-- end profile-highlight -->
+			</div>
+			<!-- end profile-left -->
+			<!-- begin profile-right -->
+			<div class="profile-right">
+				<!-- begin profile-info -->
+				<div class="profile-info">
+					<!-- begin table -->
+					<div class="table-responsive">
+						<div class="row">
+							<div class="col-sm-6">
+								<table class="table table-profile">
+									
+									<tbody>
+										<tr class="highlight">
+											<td class="field">Circonscription</td>
+											<td><a href="#">{{utilisateur.circonscription}}</a></td>
+										</tr>
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+										<tr>
+											<td class="field">Localisation</td>
+											<td>{{utilisateur.localisation}}</td>
+										</tr>
+										<tr>
+											<td class="field">Contact 1</td>
+											<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{utilisateur.contact}}</td>
+										</tr>
+										<tr>
+											<td class="field">Contact 2</td>
+											<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{utilisateur.contact2}}</td>
+										</tr>
+									
+										
+										
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+										<tr class="highlight">
+											<td class="field">Coordonnées</td>
+											<td>{{utilisateur.geometry}}</td>
+										</tr>
+										<tr class="divider">
+											<td colspan="2"></td>
+										</tr>
+									</tbody>
+								</table>
+
+								{% for respo in utilisateur.utilisateur_responsable.all%}
+									<table class="table table-">
+										<thead>
+											<tr>
+												<th colspan="2">
+													<h4> {{respo.fullname}} </h4>
+												</th>
+											</tr>
+										</thead>
+										<tbody class="text-left">
+											<tr>
+												<td class="field">Contact</td>
+												<td><i class="fa fa-mobile fa-lg m-r-5"></i> {{utilisateur.contact}}</td>
+											</tr>
+											<tr>
+												<td class="field">identifiant</td>
+												{% if respo.is_never_connected %}
+												<td>{{respo.username}}</td>
+												{% else %}
+												<td> **********</td>
+												{% endif %}
+											</tr>
+											<tr>
+												<td class="field">Mot de passe</td>
+												<td>ipipass</td>
+											</tr>
+											<tr>
+												<td class="field"></td>
+												<td><button class="btn btn-warning btn-block btn-sm" data-toggle="modal" data-target="#modal-responsable{{respo.id}}">Modifier les informations</button></td>
+											</tr>
+										</tbody>
+									</table>
+								{% endfor %}
+							</div>
+							<div class="col-sm-6" style="height:500px; border: solid 1px red">
+								<div class="map-min" style="">
+									{{ datas|json_script:"cirs-data" }}	
+            						<div id="mymap" style="height:490px"></div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					<!-- end table -->
+				</div>
+				<!-- end profile-info -->
+			</div>
+			<!-- end profile-right -->
+		</div>
+		<!-- end profile-section -->
+	</div>
+	<!-- end profile-container -->
+</div>
+
+
+
+{% for respo in utilisateur.utilisateur_responsable.all%}
+<div class="modal fade" id="modal-responsable{{respo.id}}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title text-bold">Resposable de {{utilisateur.name}}</h4>
+            </div>
+            <form id="formResponsable" class="formShamman" classname="ResponsableutilisateurForm" enctype="multipart/form-data" method="POST">
+                <div class="modal-body" style="padding: 5% ">
+                    <div class="">
+						<div class="form-group">
+							<label for="exampleInputEmail1">Nom complet du responsable</label>
+							<input type="text" name="fullname" value="{{respo.fullname}}" class="form-control" required placeholder="..." />
+						</div><br>
+						<div class="form-group">
+							<label for="exampleInputPassword1">Contacts</label>
+							<input type="text" name="contact" value="{{respo.contact}}" class="form-control" required placeholder="0120020263" />
+						</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden"  name="id" value="{{respo.id}}">
+                    <button type="submit" class="btn btn-md btn-success">Mettre à jour les informations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock "content" %}
+
+{% block "scriptjs" %}
+	<script>
+		$(document).ready(function() {
+			var mymap = L.map('mymap').setView([7.561891, -5.376317], 8);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				maxZoom: 22,
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(mymap);
+		
+			var customIcon = L.icon({
+				iconUrl: "{% static 'dist/img/icons/pharmacy.png' %}",
+				iconSize: [24, 24],
+				iconAnchor: [16, 16],
+				popupAnchor: [0, -16]
+			});
+		
+		
+		
+			var layers = {}
+			const cirs = JSON.parse(document.getElementById("cirs-data").textContent)
+			console.log(cirs)
+			for (let zone of cirs) {
+				var markersLayer = L.markerClusterGroup();
+				for (var item of zone["utilisateurs"]["features"]) {
+					console.log(item)
+					var marker = L.geoJSON(item, {
+						pointToLayer: function (feature, latlng) {
+						return L.marker(latlng, { icon: customIcon });
+						},
+					}).addTo(mymap);
+					var popupContent = '<div style="padding: 1em;">' +
+						'<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
+						'<p style="margin: 0;">Contenu du popup</p>' +
+						'</div>';
+					marker.bindPopup(popupContent);
+					markersLayer.addLayer(marker);
+				}
+				layers[zone["id"]] = markersLayer;
+			}
+		
+			for (let key in layers){
+				var layer = layers[key];
+				layer.addTo(mymap);
+			}
+		
+			function zoomCluster(id){
+				alert(id);
+			}
+		
+			$("tr.circonscription").click(function() {
+				//on desactive les bounces
+				for (let key in layers){
+					var layer = layers[key];
+					layer.eachLayer(function(marker) {
+						marker.stopBouncing();
+					});
+				}
+				//on active les selectionnées
+				let id = $(this).attr("id");
+				var layer = layers[id];
+				layer.eachLayer(function(marker) {
+					marker.bounce();
+				});
+			  });
+		});
+	</script>
+{% endblock "scriptjs" %}

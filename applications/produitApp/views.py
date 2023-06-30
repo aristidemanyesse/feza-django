@@ -11,11 +11,10 @@ from django.shortcuts import redirect, get_object_or_404
 @render_to('produitApp/medicaments.html')
 def medicaments(request):
     if request.method == "GET":
-        medicaments = Produit.objects.filter(deleted = False).order_by("name")
-        types = TypeProduit.objects.filter(deleted = False)
+        produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).order_by("name")
         ctx = {
-            "medicaments" : medicaments,
-            "types": types
+            "produits" : produits,
+            "types": TypeProduit.objects.all()
         }
         return ctx
 
@@ -26,13 +25,11 @@ def medicaments_officine(request, id):
     if request.method == "GET":
         officine = get_object_or_404(Officine, pk=id)
         prodoffs = officine.officine_for_produit.filter(produit__deleted = False).order_by("produit__name")
-        types = TypeProduit.objects.filter(deleted = False)
-        stocks = StockState.objects.filter(deleted = False)
-        produits = Produit.objects.filter(deleted = False)
+        produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).exclude(id__in = prodoffs.values_list('produit', flat = True)).order_by("name")
         ctx = {
             "prodoffs" : prodoffs,
-            "types": types,
-            "stocks": stocks,
             "produits": produits,
+           
         }
         return ctx
+

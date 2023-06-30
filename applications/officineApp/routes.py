@@ -3,7 +3,18 @@ from .schemas import *
 from .serializers import *
 import graphene, requests
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.measure import D
+import math
+from geopy.distance import geodesic
+
+
+
+
+def distance_to_decimal_degrees(distance, latitude):
+    lat_radians = latitude * (math.pi / 180)
+    # 1 longitudinal degree at the equator equal 111,319.5m equiv to 111.32km
+    return distance.m / (111_319.5 * math.cos(lat_radians))
+
+
 
 class OfficineDistanceType(graphene.ObjectType):
     officine = graphene.String()
@@ -28,7 +39,7 @@ class OfficineAppQuery(object):
     
     
     search_officine_distance = graphene.List(OfficineDistanceType, id=graphene.String(), longitude=graphene.Float(), latitude=graphene.Float())
-    def resolve_officine_distance (root, info, id, longitude, latitude, **kwargs):
+    def resolve_search_officine_distance (root, info, id, longitude, latitude, **kwargs):
         point = Point(longitude, latitude, srid=4326)
         officine = Officine.objects.filter(id = id).annotate(distance=Distance('geometry', point)).first()
         if officine is not None:
@@ -47,18 +58,21 @@ class OfficineAppQuery(object):
 
     
 
-    search_officine_avialable = graphene.List(OfficineDistanceType, longitude=graphene.Float(), latitude=graphene.Float(), distance=graphene.Int(), circonscription=graphene.UUID())
-    def resolve_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
+    search_officine_avialable = graphene.List(OfficineDistanceType, longitude=graphene.Float(required = False), latitude=graphene.Float(), distance=graphene.Int(), circonscription=graphene.UUID())
+    def resolve_search_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
+        print("Resolving hello world...", longitude, latitude, distance, circonscription)
         if distance > 0:
             point = Point(longitude, latitude, srid=4326)
-            officines = Officine.objects.filter( geometry__distance_lte = (point, distance)).annotate(distance=Distance('geometry', point))
+            officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(type__etiquette = TypeOfficine.PHARMACIE).order_by("distance")[:10]
         else:
             officines = Officine.objects.filter(circonscription__id = circonscription)
         
         datas = []
-        for officine in officines:   
-            multilinestring = {"":""}
+        print(officines.count())
+        for officine in officines: 
             try:
+                
+                multilinestring = {"":""}
                 url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
                 response = requests.get(url)
                 multilinestring = {}
