@@ -10,6 +10,12 @@ class DemandeForm(ModelForm):
         
         
 # Create the form class.
+class OfficineDemandeForm(ModelForm):
+    class Meta:
+        model = OfficineDemande
+        fields = "__all__"
+        
+# Create the form class.
 class ReponseForm(ModelForm):
     class Meta:
         model = Reponse

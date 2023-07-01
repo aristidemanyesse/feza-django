@@ -2,6 +2,7 @@
 {% load myfilters %}
 {% load static %}
 {% load leaflet_tags %}
+{% load humanize %}
 
 
 {% block "content" %}
@@ -57,20 +58,20 @@
     <!-- end row -->
     
 
-    <h2 class="page-header">Tableau de bord <small>IPI, Ici les Pharmacies Ivoiriennes</small></h2>
+    <h2 class="page-header">Les demandes en attente <small>des plus recents aux plus anciens</small></h2>
 
     <!-- begin row -->
     <div class="row">
-        {% for demande in demandes %}
-        <div class="col-md-4">
+        {% for officinedemande in officinedemandes %}
+        <div class="col-sm-6">
             <div class="panel panel-inverse" data-sortable-id="index-8">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
-                        <a href="javascript:;" class="btn btn-sm btn-icon btn-circle btn-danger" onclick="delete_password('Demande', '{{demande.id}}')" ><i class="fa fa-times"></i></a>
+                        <a href="javascript:;" class="btn btn-sm btn-icon btn-circle btn-danger" onclick="delete_password('OfficineDemande', '{{officinedemande.id}}')" ><i class="fa fa-times"></i></a>
                     </div>
-                    <h4 class="panel-title">{{demande.created_at}}</h4>
+                    <h4 class="panel-title">{{officinedemande.created_at|naturaltime}}</h4>
                 </div>
-                <div class="panel-body" id="{{demande.id}}">
+                <div class="panel-body" id="{{officinedemande.id}}">
                     <div class="row">
                         <div class="col-sm-8">
                             <div class="row">
@@ -78,17 +79,17 @@
                                     <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
                                         {% for produit in produits %}
                                             <option value="{{produit.id}}">{{produit.name}}</option>
-                                        {% endfor %}'{{demande.id}}'
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
-                                    <button class="btn btn-success m-r-5" onclick="ajouter('{{demande.id}}')"> Ajouter</button>
+                                    <button class="btn btn-success m-r-5" onclick="ajouter('{{officinedemande.id}}')"> Ajouter</button>
                                 </div>
                             </div>
 
                             <table class="table table-striped">
                                 <tbody>
-                                    {% for item in demande.demande_lignes.all %}
+                                    {% for item in officinedemande.demande.demande_lignes.all %}
                                         <tr class="odd gradeX" id="{{item.produit.id}}">
                                             <td><img src="{{ item.produit.image.url }}" style="width: 20px"></td>
                                             <td style="font-size:11px; font-weight:bold">{{ item.produit.name }}</td>
@@ -99,14 +100,16 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <p>{{demande.commentaire}}</p>
+                            <p>{{officinedemande.demande.commentaire}}</p>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <a href="{{ demande.ordonnance.url }}" data-lightbox="gallery-group-3">
-                                <img src="{{ demande.ordonnance.url }}"   style="width: 100%"  alt="ordonnance" />
+                            {%  if officinedemande.demande.ordonnance %}
+                            <a href="{{ officinedemande.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                <img src="{{ officinedemande.demande.ordonnance.url }}"   style="width: 100%"  alt="ordonnance" />
                             </a>
                             <br><br>
                             <span>ordonnance</span>
+                            {% endif %}
                         </div>
                     </div>
                     <hr>
@@ -115,7 +118,7 @@
                             <textarea class="form-control" rows="3" name="comment"></textarea>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <button class="btn btn-success m-r-5" onclick="validerDemande('{{demande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
+                            <button class="btn btn-success m-r-5" onclick="validerDemande('{{officinedemande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
                         </div>
                     </div>
                     

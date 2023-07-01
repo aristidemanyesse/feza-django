@@ -13,6 +13,11 @@ class DemandeSerializer(ModelSerializer):
         model = Demande
         fields = '__all__'
 
+class OfficineDemandeSerializer(ModelSerializer):
+    class Meta:
+        model = OfficineDemande
+        fields = '__all__'
+
 class LigneDemandeSerializer(ModelSerializer):
     class Meta:
         model = LigneDemande

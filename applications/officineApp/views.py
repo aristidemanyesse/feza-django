@@ -72,6 +72,7 @@ def demandes(request, id):
     if request.method == "GET":
         officine = get_object_or_404(Officine, pk=id)
         demandes = officine.officine_demande.filter(deleted = False).order_by("-created_at")
+        print(demandes)
         # produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).exclude(id__in = prodoffs.values_list('produit', flat = True)).order_by("name")
         ctx = {
             "demandes" : demandes,

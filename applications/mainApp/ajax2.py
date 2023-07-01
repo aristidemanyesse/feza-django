@@ -28,7 +28,7 @@ def valider_demande(request):
             datas = request.POST
             prods = json.loads(datas["produits"])
             produits = [x for x in prods]
-            demande = Demande.objects.filter(id = datas["demande"]).first()
+            demande = OfficineDemande.objects.filter(id = datas["demande"]).first()
             produits = Produit.objects.filter(id__in = produits)
             
             if demande is not None and produits.count() > 0 :

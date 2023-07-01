@@ -60,7 +60,6 @@ class OfficineAppQuery(object):
 
     search_officine_avialable = graphene.List(OfficineDistanceType, longitude=graphene.Float(required = False), latitude=graphene.Float(), distance=graphene.Int(), circonscription=graphene.UUID())
     def resolve_search_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
-        print("Resolving hello world...", longitude, latitude, distance, circonscription)
         if distance > 0:
             point = Point(longitude, latitude, srid=4326)
             officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(type__etiquette = TypeOfficine.PHARMACIE).order_by("distance")[:10]
@@ -68,22 +67,20 @@ class OfficineAppQuery(object):
             officines = Officine.objects.filter(circonscription__id = circonscription)
         
         datas = []
-        print(officines.count())
         for officine in officines: 
             try:
-                
                 multilinestring = {"":""}
                 url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
                 response = requests.get(url)
                 multilinestring = {}
                 data = response.json()
-                if data['code'] == 'Ok':
+                if data['code'] == 'Ok' :
                     geometry = data['routes'][0]
                     geometry["type"] = "Feature"
                     multilinestring = json.dumps(geometry)
                 
-                    data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
-                    datas.append(data)
+                data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
+                datas.append(data)
             except Exception as e:
                 print(f"Error generation routing for {officine.name}", e)
                         

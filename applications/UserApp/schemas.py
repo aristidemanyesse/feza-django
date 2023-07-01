@@ -29,6 +29,19 @@ class DemandeType(DjangoSerializerType):
             "deleted": ("exact", ),
             "utilisateur__id": ("exact",),
             "status": ("exact", ),
+        }
+
+
+
+class OfficineDemandeType(DjangoSerializerType):
+    class Meta:
+        serializer_class = OfficineDemandeSerializer
+        description = " Type definition for a single OfficineDemande "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "demande__id": ("exact",),
+            "status": ("exact", ),
             "officine__id": ("exact",),
             "officine__circonscription__id": ("exact",),
         }
@@ -55,6 +68,7 @@ class ReponseType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "demande__id": ("exact",),
+            "demande__demande__id": ("exact",),
             "demande__officine__id": ("exact",),
         }
 

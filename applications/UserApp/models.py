@@ -37,14 +37,23 @@ class Utilisateur(BaseModel):
 
 class Demande(BaseModel):
     utilisateur   = models.ForeignKey(Utilisateur, on_delete = models.CASCADE, related_name="utilisateur_demande")
-    officine      = models.ForeignKey(Officine, on_delete = models.CASCADE, related_name="officine_demande")
     status        = models.BooleanField(default= False)
     ordonnance    = models.ImageField(default="", upload_to = "media/images/demandes/", max_length=255, null=True, blank=True)
     base64        = models.TextField(default="", null=True, blank=True)
     commentaire   = models.TextField(default = "", null=True, blank=True)
         
     def __str__(self):
-        return "demande de " + str(self.utilisateur) + " pour " + str(self.officine)
+        return "demande de " + str(self.utilisateur)
+    
+
+class OfficineDemande(BaseModel):
+    demande         = models.ForeignKey(Demande, on_delete = models.CASCADE, related_name="demande_officine")
+    officine      = models.ForeignKey(Officine, on_delete = models.CASCADE, related_name="officine_demande")
+    status        = models.BooleanField(default= False)
+        
+    def __str__(self):
+        return str(self.demande) + " dans " + str(self.officine)
+    
     
 
 class LigneDemande(BaseModel):
@@ -60,11 +69,12 @@ class LigneDemande(BaseModel):
 
 
 class Reponse(BaseModel):
-    demande      = models.ForeignKey(Demande, on_delete = models.CASCADE, related_name="demande_reponse")
+    demande      = models.ForeignKey(OfficineDemande, on_delete = models.CASCADE, related_name="demande_reponse")
     commentaire   = models.TextField(default = "", null=True, blank=True)
+    read        = models.BooleanField(default= False)
         
     def __str__(self):
-        return "Reponse pour " + str(self.demande)
+        return "Reponse pour " + str(self.id)
     
 
 class LigneReponse(BaseModel):
