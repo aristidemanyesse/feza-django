@@ -73,17 +73,17 @@ class OfficineAppQuery(object):
             try:
                 
                 multilinestring = {"":""}
-                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
-                response = requests.get(url)
-                multilinestring = {}
-                data = response.json()
-                if data['code'] == 'Ok':
-                    geometry = data['routes'][0]
-                    geometry["type"] = "Feature"
-                    multilinestring = json.dumps(geometry)
+                # url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+                # response = requests.get(url)
+                # multilinestring = {}
+                # data = response.json()
+                # if data['code'] == 'Ok' :
+                #     geometry = data['routes'][0]
+                #     geometry["type"] = "Feature"
+                #     multilinestring = json.dumps(geometry)
                 
-                    data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
-                    datas.append(data)
+                data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
+                datas.append(data)
             except Exception as e:
                 print(f"Error generation routing for {officine.name}", e)
                         

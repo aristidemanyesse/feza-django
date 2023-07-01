@@ -19,7 +19,16 @@ class DemandeAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['__str__', "officine", "status", "ordonnance", "commentaire", "created_at"]
+    list_display = ['__str__',"status", "ordonnance", "commentaire", "created_at"]
+
+
+@admin.register(OfficineDemande)
+class OfficineDemandeAdmin(admin.ModelAdmin):
+    empty_value_display = '-'
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+    )
+    list_display = ["officine", "demande", "status",  "created_at"]
 
 
 @admin.register(LigneDemande)
@@ -37,7 +46,7 @@ class ReponseAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['__str__', "demande", "commentaire", "created_at"]
+    list_display = ["demande", "read", "commentaire", "created_at"]
 
 
 @admin.register(LigneReponse)

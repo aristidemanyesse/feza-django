@@ -78,7 +78,7 @@ def dashboard_officine(request, id):
         ctx = {
             "officine": officine,
             "produits": produits,
-            "demandes": demandes,
+            "officinedemandes": demandes,
         }
         return ctx
           

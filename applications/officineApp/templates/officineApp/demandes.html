@@ -44,12 +44,12 @@
                                 <tr class="odd gradeX">
                                     <td>{{ item.created_at }}</td>
                                     <td>
-                                        <a href="{{ item.ordonnance.url }}" data-lightbox="gallery-group-3">
-                                            <img src="{{item.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
+                                        <a href="{{ item.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                            <img src="{{item.demande.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
                                         </a>
                                     </td>
-                                    <td>{{item.demande_lignes.filter.count}} médicaments</td>
-                                    <td>{{ item.commentaire }}</td>
+                                    <td>{{item.demande.demande_lignes.filter.count}} médicaments</td>
+                                    <td>{{ item.demande.commentaire }}</td>
                                     <td>
                                         {% if not item.status %}
                                             <label class="label label-warning">En attente</label>
