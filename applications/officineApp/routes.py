@@ -9,10 +9,12 @@ from geopy.distance import geodesic
 
 
 
-def distance_to_decimal_degrees(distance, latitude):
-    lat_radians = latitude * (math.pi / 180)
-    # 1 longitudinal degree at the equator equal 111,319.5m equiv to 111.32km
-    return distance.m / (111_319.5 * math.cos(lat_radians))
+def meters_to_degrees(metre):
+    return metre * 360 / 40000000
+
+
+def degrees_to_meters(degree):
+    return 40000000  * degree / 360
 
 
 
@@ -51,7 +53,7 @@ class OfficineAppQuery(object):
                 geometry["type"] = "Feature"
                 multilinestring = json.dumps(geometry)
             
-            data = {"officine": officine, "distance": round(officine.distance*100, 2)}
+            data = {"officine": officine, "distance": round(degrees_to_meters(officine.distance), 2)}
             url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
             
             return OfficineDistanceType(officine = officine.id, distance = officine.distance, route = json.dumps(multilinestring))
@@ -62,27 +64,30 @@ class OfficineAppQuery(object):
     def resolve_search_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
         if distance > 0:
             point = Point(longitude, latitude, srid=4326)
-            officines = Officine.objects.annotate(distance=Distance('geometry', point)).filter(type__etiquette = TypeOfficine.PHARMACIE).order_by("distance")[:10]
+            officines = Officine.objects.filter(type__etiquette = TypeOfficine.PHARMACIE).annotate(distance=Distance('geometry', point)).order_by("distance")[:distance*20]
+        elif circonscription != "" and circonscription is not None:
+            officines = Officine.objects.filter(circonscription__id = circonscription).annotate(distance=Distance('geometry', point))
         else:
-            officines = Officine.objects.filter(circonscription__id = circonscription)
+            return []
         
         datas = []
         for officine in officines: 
-            try:
-                multilinestring = {"":""}
-                url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
-                response = requests.get(url)
-                multilinestring = {}
-                data = response.json()
-                if data['code'] == 'Ok' :
-                    geometry = data['routes'][0]
-                    geometry["type"] = "Feature"
-                    multilinestring = json.dumps(geometry)
-                
-                data = OfficineDistanceType(officine = officine.id, distance = round(officine.distance*100, 2), route = json.dumps(multilinestring))
-                datas.append(data)
-            except Exception as e:
-                print(f"Error generation routing for {officine.name}", e)
+            if  degrees_to_meters(officine.distance) <= distance * 1000:
+                try:
+                    multilinestring = {"":""}
+                    url = f"https://router.project-osrm.org/route/v1/car/{point.x},{point.y};{officine.lat},{officine.lon}?steps=true&geometries=geojson"
+                    response = requests.get(url)
+                    multilinestring = {}
+                    data = response.json()
+                    if data['code'] == 'Ok' :
+                        geometry = data['routes'][0]
+                        geometry["type"] = "Feature"
+                        multilinestring = json.dumps(geometry)
+                    
+                    data = OfficineDistanceType(officine = officine.id, distance = round(degrees_to_meters(officine.distance), 2), route = json.dumps(multilinestring))
+                    datas.append(data)
+                except Exception as e:
+                    print(f"Error generation routing for {officine.name}", e)
                         
         return datas 
     
