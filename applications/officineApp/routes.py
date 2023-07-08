@@ -63,8 +63,8 @@ class OfficineAppQuery(object):
     search_officine_avialable = graphene.List(OfficineDistanceType, longitude=graphene.Float(required = False), latitude=graphene.Float(), distance=graphene.Int(), circonscription=graphene.UUID())
     def resolve_search_officine_avialable (root, info, longitude, latitude, distance, circonscription, **kwargs):
         officines = []
+        point = Point(longitude, latitude, srid=4326)
         if distance > 0:
-            point = Point(longitude, latitude, srid=4326)
             datas = Officine.objects.filter(type__etiquette = TypeOfficine.PHARMACIE).annotate(distance=Distance('geometry', point)).order_by("distance")[:distance*20]
             for officine in datas:
                 if degrees_to_meters(officine.distance) <= distance * 1000:
