@@ -39,6 +39,8 @@ typing-extensions = "==4.6.3"
 urllib3 = "==2.0.3"
 pyproj = "*"
 geopy = "*"
+apscheduler = "*"
+django-apscheduler = "*"
 
 [dev-packages]
 

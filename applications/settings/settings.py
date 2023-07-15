@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "officineApp",
     "UserApp",
     "mainApp",
+    "django_apscheduler"
 ]
 
 MIDDLEWARE = [
@@ -98,23 +100,23 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     
-    # 'default': {
-    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-    #     'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
-    #     'PORT'      : os.getenv("DB_PORT", 3306),
-    #     'USER'      : os.getenv("DB_USER", "root"),
-    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
-    #     'NAME'      : os.getenv("DB_NAME", "ipi"),
-    # },
-    
     'default': {
         'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
         'PORT'      : os.getenv("DB_PORT", 3306),
-        'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
-        'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+        'USER'      : os.getenv("DB_USER", "root"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+        'NAME'      : os.getenv("DB_NAME", "ipi"),
     },
+    
+    # 'default': {
+    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+    #     'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+    #     'PORT'      : os.getenv("DB_PORT", 3306),
+    #     'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
+    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
+    #     'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+    # },
 }
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
@@ -203,3 +205,16 @@ CRONJOBS = [
     # ('0 10 * * 5', 'officineApp.cron.create_garde', f'>> {os.path.join(BASE_DIR, "/logs/garde.log")}'),
     ('*/1 * * * *', 'officineApp.cron.create_garde', f'>> {CRON_LOG_DIR}'),
 ]
+
+
+# # Configurer le scheduler
+# from officineApp.cron import create_garde
+
+# scheduler = BackgroundScheduler()
+# # scheduler.add_jobstore(DjangoJobStore(), "default")
+# APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Format d'affichage des dates/heure
+
+# APSCHEDULER_RUN_NOW = False
+
+# scheduler.add_job(create_garde, "interval", minutes=10)
+# scheduler.start()
