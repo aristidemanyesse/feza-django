@@ -7,7 +7,6 @@ from UserApp.models import Utilisateur
 from officineApp.models import ResponsableOfficine, Officine
 from coreApp.models import Etat
 from django.utils import translation
-from django.shortcuts import redirect, get_object_or_404
 
 
 

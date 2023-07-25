@@ -46,6 +46,7 @@ class ProduitInOfficine(BaseModel):
     stock_state = models.ForeignKey(StockState, null = True, blank = True, on_delete=models.CASCADE, related_name="stock_in_officine")
     produit = models.ForeignKey(Produit, null = True, blank = True, on_delete= models.CASCADE, related_name="produit_in_officine")
     officine = models.ForeignKey(Officine, null = True, blank = True, on_delete= models.CASCADE, related_name="officine_for_produit")
+    price = models.IntegerField(default=0)
     
     class Meta:
         ordering = ("produit__name", "-stock_state__etiquette")

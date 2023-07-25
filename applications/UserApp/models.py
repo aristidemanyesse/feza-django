@@ -57,9 +57,10 @@ class OfficineDemande(BaseModel):
     
 
 class LigneDemande(BaseModel):
-    demande         = models.ForeignKey(Demande, on_delete = models.CASCADE, related_name="demande_lignes")
-    produit         = models.ForeignKey(Produit, on_delete = models.CASCADE, related_name="produit_ligne")
-    status        = models.BooleanField(default= False)
+    demande   = models.ForeignKey(Demande, on_delete = models.CASCADE, related_name="demande_lignes")
+    produit   = models.ForeignKey(Produit, on_delete = models.CASCADE, related_name="produit_ligne")
+    quantite  = models.IntegerField(default=1)
+    status    = models.BooleanField(default= False)
         
     def __str__(self):
         return str(self.produit) + " pour " + str(self.demande)
