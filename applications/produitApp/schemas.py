@@ -47,7 +47,6 @@ class ProduitInOfficineType(DjangoSerializerType):
             "officine__id": ("exact",),
             "produit__id": ("exact",),
             "produit__name": ("icontains",),
-            "stock_state__etiquette": ("exact",)
         }
         
         

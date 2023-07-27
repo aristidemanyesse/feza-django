@@ -78,7 +78,7 @@ class OfficineAppQuery(object):
 
         datas = []
         for officine in officines: 
-            # multilinestring = {}
+            multilinestring = {}
             multilinestring = route_for_officine(officine, point)
             data = OfficineDistanceType(officine = officine.id, distance = round(degrees_to_meters(officine.distance), 2), route = json.dumps(multilinestring))
             datas.append(data)

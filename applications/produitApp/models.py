@@ -42,14 +42,13 @@ class Produit(BaseModel):
 
 
 class ProduitInOfficine(BaseModel):
-    quantite = models.IntegerField(default=0)
-    stock_state = models.ForeignKey(StockState, null = True, blank = True, on_delete=models.CASCADE, related_name="stock_in_officine")
     produit = models.ForeignKey(Produit, null = True, blank = True, on_delete= models.CASCADE, related_name="produit_in_officine")
     officine = models.ForeignKey(Officine, null = True, blank = True, on_delete= models.CASCADE, related_name="officine_for_produit")
     price = models.IntegerField(default=0)
-    
+    quantite = models.IntegerField(default=0)
+     
     class Meta:
-        ordering = ("produit__name", "-stock_state__etiquette")
+        ordering = ("produit__name",)
     
     def __str__(self):
         return str(self.produit.name) + " dans " + str(self.officine.name)
@@ -64,14 +63,11 @@ class Assurance(BaseModel):
 
 
 
-# @signals.post_save(sender=Produit)
-# def sighandler(instance, created, **kwargs):
-#     if created:
-#         for officine in Officine.objects.filter(type = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE)):
-#             ProduitInOfficine.objects.create(
-#                 officine = officine,
-#                 produit = instance
-#             )
+@signals.post_save(sender=ProduitInOfficine)
+def sighandler(instance, created, **kwargs):
+    if created:
+        instance.price = instance.produit.price
+        instance.save()
         
 # @signals.post_save(sender=Officine)
 # def sighandler(instance, created, **kwargs):

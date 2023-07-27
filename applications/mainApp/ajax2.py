@@ -2,6 +2,8 @@ from UserApp.models import *
 from django.http.response import HttpResponse, JsonResponse
 import json
 
+from produitApp.models import ProduitInOfficine
+
 def ajouter(request):
     if request.method == "POST":
         datas = request.POST
@@ -33,13 +35,20 @@ def valider_demande(request):
             
             if demande is not None and produits.count() > 0 :
                 reponse =  Reponse.objects.create(demande=demande, commentaire = datas["comment"])
+                total = 0
                 for produit in produits :
-                    LigneReponse.objects.create(reponse=reponse, produit=produit, status= prods[str(produit.id)])
-            
+                    status = prods[str(produit.id)]
+                    pio, created = ProduitInOfficine.objects.get_or_create(officine=demande.officine, produit=produit)
+                    print(pio.__dict__)
+                    total += (pio.price or 0) if status else 0
+                    LigneReponse.objects.create(reponse=reponse, produit=produit, price = pio.price, status= status)
+                reponse.price = total
+                reponse.save()
+                
             demande.status = True
             demande.save()
             return JsonResponse({"status":True})
         
         except Exception as e :
             print("Error valider_demande: " + str(e))
-            return JsonResponse({"status":False, "message":_("Une erreur s'est produite lors de l'opération, veuillez recommencer !")})
+            return JsonResponse({"status":False, "message":"Une erreur s'est produite lors de l'opération, veuillez recommencer !"})

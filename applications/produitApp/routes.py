@@ -45,7 +45,7 @@ class ProduitAppQuery(object):
         produits_in = Produit.objects.filter(deleted = False, id__in=produits)
         for officine in officines:
             pro_offs =  officine.officine_for_produit.filter(produit__id__in = produits_in.values_list('id', flat=True))
-            pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
+            # pro_offs = pro_offs.exclude(stock_state__etiquette = StockState.RUPTURE)
             ratio = pro_offs.count()
             if ratio == 0 :
                 continue

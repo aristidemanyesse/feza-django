@@ -72,6 +72,7 @@ class LigneDemande(BaseModel):
 class Reponse(BaseModel):
     demande      = models.ForeignKey(OfficineDemande, on_delete = models.CASCADE, related_name="demande_reponse")
     commentaire   = models.TextField(default = "", null=True, blank=True)
+    price     = models.IntegerField(default= 0)
     read        = models.BooleanField(default= False)
         
     def __str__(self):
@@ -79,9 +80,11 @@ class Reponse(BaseModel):
     
 
 class LigneReponse(BaseModel):
-    reponse         = models.ForeignKey(Reponse, on_delete = models.CASCADE, related_name="reponse_lignes")
-    produit         = models.ForeignKey(Produit, on_delete = models.CASCADE, related_name="produit_ligne_reponse")
-    status        = models.BooleanField(default= False)
+    reponse   = models.ForeignKey(Reponse, on_delete = models.CASCADE, related_name="reponse_lignes")
+    produit   = models.ForeignKey(Produit, on_delete = models.CASCADE, related_name="produit_ligne_reponse")
+    price     = models.IntegerField(default= 0)
+    quantite  = models.IntegerField(default=1)
+    status    = models.BooleanField(default= False)
         
     def __str__(self):
         return str(self.produit) + " pour " + str(self.reponse)
