@@ -37,7 +37,7 @@ class LigneDemandeAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['demande', "produit", "status", "created_at"]
+    list_display = ['demande', "produit", "quantite", "status", "created_at"]
 
 
 @admin.register(Reponse)
@@ -55,4 +55,13 @@ class LigneReponseAdmin(admin.ModelAdmin):
     list_filter = (
         ('created_at', DateFieldListFilter),
     )
-    list_display = ['reponse', "produit", "status", "created_at"]
+    list_display = ['reponse', "produit", "price", "quantite", "status", "created_at"]
+
+
+@admin.register(SubsLigneReponse)
+class SubsLigneReponseAdmin(admin.ModelAdmin):
+    empty_value_display = '-'
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+    )
+    list_display = ['ligne', "produit", "quantite", "price", "created_at"]

@@ -33,3 +33,8 @@ class LigneReponseSerializer(ModelSerializer):
     class Meta:
         model = LigneReponse
         fields = '__all__'
+
+class SubsLigneReponseSerializer(ModelSerializer):
+    class Meta:
+        model = SubsLigneReponse
+        fields = '__all__'

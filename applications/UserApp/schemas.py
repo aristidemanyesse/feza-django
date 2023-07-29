@@ -85,3 +85,15 @@ class LigneReponseType(DjangoSerializerType):
             "status": ("exact", ),
         }
 
+
+class SubsLigneReponseType(DjangoSerializerType):
+    class Meta:
+        serializer_class = SubsLigneReponseSerializer
+        description = " Type definition for a single SubsLigneReponse "
+        filter_fields = {
+            "id": ("exact", ),
+            "deleted": ("exact", ),
+            "ligne__id": ("exact",),
+            "produit__id": ("exact",),
+        }
+

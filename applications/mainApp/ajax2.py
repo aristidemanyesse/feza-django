@@ -39,9 +39,8 @@ def valider_demande(request):
                 for produit in produits :
                     status = prods[str(produit.id)]
                     pio, created = ProduitInOfficine.objects.get_or_create(officine=demande.officine, produit=produit)
-                    print(pio.__dict__)
-                    total += (pio.price or 0) if status else 0
-                    LigneReponse.objects.create(reponse=reponse, produit=produit, price = pio.price, status= status)
+                    total += (pio.price or 0) * 1 if status else 0
+                    LigneReponse.objects.create(reponse=reponse, produit=produit, quantite=1, price = pio.price, status= status)
                 reponse.price = total
                 reponse.save()
                 

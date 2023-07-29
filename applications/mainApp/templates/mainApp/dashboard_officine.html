@@ -63,7 +63,7 @@
     <!-- begin row -->
     <div class="row">
         {% for officinedemande in officinedemandes %}
-        <div class="col-sm-6">
+        <div class="col-12">
             <div class="panel panel-inverse" data-sortable-id="index-8">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
@@ -73,7 +73,7 @@
                 </div>
                 <div class="panel-body" id="{{officinedemande.id}}">
                     <div class="row">
-                        <div class="col-sm-8">
+                        <div class="col-sm-10">
                             <div class="row">
                                 <div class="col-sm-9">
                                     <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
@@ -88,11 +88,21 @@
                             </div>
 
                             <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">Désignation</th>
+                                        <th>Qté</th>
+                                        <th>disponible ?</th>
+                                        <th colspan="2">Substitut</th>
+                                        <th>Qté</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     {% for item in officinedemande.demande.demande_lignes.all %}
                                         <tr class="odd gradeX" id="{{item.produit.id}}">
                                             <td><img src="{{ item.produit.image.url }}" style="width: 20px"></td>
                                             <td style="font-size:11px; font-weight:bold">{{ item.produit.name }}</td>
+                                            <td style="font-size:11px; font-weight:bold">x {{ item.quantite }}</td>
                                             <td>
                                                 <input type="checkbox" class="form-control input-xs" value="" />
                                             </td>
@@ -102,7 +112,7 @@
                             </table>
                             <p>{{officinedemande.demande.commentaire}}</p>
                         </div>
-                        <div class="col-sm-4 text-center">
+                        <div class="col-sm-2 text-center">
                             {%  if officinedemande.demande.ordonnance %}
                             <a href="{{ officinedemande.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
                                 <img src="{{ officinedemande.demande.ordonnance.url }}"   style="width: 100%"  alt="ordonnance" />

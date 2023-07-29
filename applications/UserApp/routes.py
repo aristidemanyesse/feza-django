@@ -10,6 +10,7 @@ class UserAppQuery(object):
     search_ligne_demande  = LigneDemandeType.ListField(action=graphene.String(default_value="search_ligne_demande"))
     search_reponse        = ReponseType.ListField(action=graphene.String(default_value="search_reponse"))
     search_ligne_reponse  = LigneReponseType.ListField(action=graphene.String(default_value="search_ligne_reponse"))
+    search_subs_ligne_reponse  = SubsLigneReponseType.ListField(action=graphene.String(default_value="search_subs_ligne_reponse"))
     
     
 class UserAppMutation(object):
@@ -36,3 +37,7 @@ class UserAppMutation(object):
     # LigneReponseType
     create_ligne_reponse  = LigneReponseType.CreateField()
     update_ligne_reponse  = LigneReponseType.UpdateField()
+    
+    # LigneReponseType
+    create_subs_ligne_reponse  = SubsLigneReponseType.CreateField()
+    update_subs_ligne_reponse  = SubsLigneReponseType.UpdateField()

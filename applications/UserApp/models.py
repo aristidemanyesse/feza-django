@@ -88,6 +88,16 @@ class LigneReponse(BaseModel):
         
     def __str__(self):
         return str(self.produit) + " pour " + str(self.reponse)
+
+
+class SubsLigneReponse(BaseModel):
+    ligne    = models.ForeignKey(LigneReponse, on_delete = models.CASCADE, related_name="lignes_sub")
+    produit  = models.ForeignKey(Produit, on_delete = models.CASCADE, related_name="produit_subs_ligne_reponse")
+    price    = models.IntegerField(default= 0)
+    quantite = models.IntegerField(default=1)
+        
+    def __str__(self):
+        return str(self.produit) + " pour " + str(self.ligne)
     
 
     
