@@ -73,28 +73,17 @@
                 </div>
                 <div class="panel-body" id="{{officinedemande.id}}">
                     <div class="row">
-                        <div class="col-sm-10">
-                            <div class="row">
-                                <div class="col-sm-9">
-                                    <select class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
-                                        {% for produit in produits %}
-                                            <option value="{{produit.id}}">{{produit.name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <button class="btn btn-success m-r-5" onclick="ajouter('{{officinedemande.id}}')"> Ajouter</button>
-                                </div>
-                            </div>
-
+                        <div class="col-sm-12">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th colspan="2">Désignation</th>
-                                        <th>Qté</th>
-                                        <th>disponible ?</th>
-                                        <th colspan="2">Substitut</th>
-                                        <th>Qté</th>
+                                        <th colspan="2" style="width:35%">Désignation</th>
+                                        <th style="width:30px">Qté</th>
+                                        <th style="width:130px;">Qté disponible</th>
+                                        <th style="border-right: 3px dashed grey;" class="text-center">dispo ?</th>
+                                        <th  style="width:30%" >Produit de Substitut</th>
+                                        <th style="width:130px">Qté substitut</th>
+                                        <th>Rdv relance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,8 +92,40 @@
                                             <td><img src="{{ item.produit.image.url }}" style="width: 20px"></td>
                                             <td style="font-size:11px; font-weight:bold">{{ item.produit.name }}</td>
                                             <td style="font-size:11px; font-weight:bold">x {{ item.quantite }}</td>
-                                            <td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <input type="number" name="qte" class="form-control input-sm" value="{{ item.quantite }}" min="1" />
+                                            </td>
+                                            <td style="border-right: 3px dashed grey">
                                                 <input type="checkbox" class="form-control input-xs" value="" />
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <select name="substitut" class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                                        <option value="">------------</option>
+                                                        {% for produit in produits %}
+                                                            <option value="{{produit.id}}">{{produit.name}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <input type="number"  name="substitut_qte" class="form-control input-sm" value="{{ item.quantite }}" min="1" />
+                                                </div>
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <select name="rdv" class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                                        <option value="0">------------</option>
+                                                        <option value="1">disponible demain</option>
+                                                        <option value="2">disponible après-demain</option>
+                                                        <option value="5">disponible dans 5 jours</option>
+                                                        <option value="7">disponible dans 1 semaine</option>
+                                                        <option value="14">disponible dans 2 semaine</option>
+                                                        <option value="30">disponible dans 1 mois</option>
+                                                        <option value="60">disponible dans 2 mois</option>
+                                                    </select>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% endfor %}

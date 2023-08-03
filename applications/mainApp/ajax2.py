@@ -1,4 +1,5 @@
 from UserApp.models import *
+from demandeApp.models import *
 from django.http.response import HttpResponse, JsonResponse
 import json
 
@@ -29,6 +30,11 @@ def valider_demande(request):
         try : 
             datas = request.POST
             prods = json.loads(datas["produits"])
+            produits_qte = json.loads(datas["produits_qte"])
+            substituts = json.loads(datas["substituts"])
+            substituts_qte = json.loads(datas["substituts_qte"])
+            rdv = json.loads(datas["rdv"])
+            
             produits = [x for x in prods]
             demande = OfficineDemande.objects.filter(id = datas["demande"]).first()
             produits = Produit.objects.filter(id__in = produits)
@@ -39,8 +45,23 @@ def valider_demande(request):
                 for produit in produits :
                     status = prods[str(produit.id)]
                     pio, created = ProduitInOfficine.objects.get_or_create(officine=demande.officine, produit=produit)
-                    total += (pio.price or 0) * 1 if status else 0
-                    LigneReponse.objects.create(reponse=reponse, produit=produit, quantite=1, price = pio.price, status= status)
+                    ligne = LigneReponse.objects.create(reponse=reponse, produit=produit, quantite=int(produits_qte[str(produit.id)]), price = pio.price, status= status)
+                    if status:
+                        total += pio.price * ligne.quantite if status else 0
+                    else:
+                        for key, value in substituts.items():
+                            if key == str(produit.id):
+                                _produit = Produit.objects.get(id = value)
+                                pio, created = ProduitInOfficine.objects.get_or_create(officine=demande.officine, produit=_produit)
+                                sub = SubsLigneReponse.objects.create(ligne=ligne, produit=_produit, quantite = int(substituts_qte[str(produit.id)]), price = pio.price)
+                                total += pio.price * sub.quantite
+                                break
+                        
+                        for key, value in rdv.items():
+                            if key == str(produit.id):
+                                RdvLigneReponse.objects.create(ligne=ligne, days=value)
+                                break
+                        
                 reponse.price = total
                 reponse.save()
                 
