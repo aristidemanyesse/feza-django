@@ -54,3 +54,27 @@ def get(request):
         except Exception as e:
             print("erreur save :", e)
             return JsonResponse({"status":False, "message": _("Erreur lors du processus. Veuillez recommencer : ")+str(e)})
+        
+        
+        
+
+def change_price(request):
+    if request.method == "POST":
+        try:
+            if int(datas["price"]) < 1:
+                return JsonResponse({"status":False, "message": _("Veuillez renseigner un prix correct pour ce médicament : ")})
+            
+            datas = request.POST
+            try:
+                produit = Produit.objects.get(id = datas["id"])
+                produit, created = ProduitInOfficine.objects.get_or_create(produit = produit, officine = Officine.objects.get(id = request.officine.id))
+            except Exception as e :
+                produit = ProduitInOfficine.objects.get(id = datas["id"])
+            
+            produit.price = int(datas["price"])
+            produit.save()
+            return JsonResponse({"status":True, "data":serialize('json', [produit])}, safe=True)
+        
+        except Exception as e:
+            print("erreur save :", e)
+            return JsonResponse({"status":False, "message": _("Erreur lors du processus. Veuillez recommencer : ")+str(e)})

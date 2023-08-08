@@ -1,8 +1,42 @@
-    $(".panel-body").find("input[type='checkbox']").each(function(i, element){
-        element.check = false;
-    })
 
 
+    timer = setInterval(()=>{
+        var url = "/main/dashboard/check_demande/";
+        $.post({ url: url, processData: false, contentType: false}, function(data){
+            if (data.status){
+                $("body").find("div.toast.toast-success").addClass("alerte");
+
+
+                var bipAudio = new Audio("../../../static/dist/sounds/bip.mp3");
+                bipAudio.addEventListener('ended', function() {
+                    this.currentTime = 0; // Réinitialiser la position de lecture à 0
+                    this.play(); // Jouer à nouveau le bip lorsque le son se termine
+                }, false);
+                bipAudio.play(); 
+                
+                setInterval(function() {
+                    var bipAudio = new Audio("../../../static/dist/sounds/bip.mp3");
+                    bipAudio.addEventListener('ended', function() {
+                        this.currentTime = 0; // Réinitialiser la position de lecture à 0
+                        this.play(); // Jouer à nouveau le bip lorsque le son se termine
+                      }, false);
+                      bipAudio.play(); 
+                  }, 1000 * 20)
+                
+                  setInterval(function() {
+                    $(".alerte").toggle();
+                  }, 400)
+                Alerter.success('Nouvelle demande !', "Vous avez reçu une nouvelle demande.\n Veuillez actualiser la page pour repondre à cette demande.", 15 * 60 * 7 * 1000);
+                clearInterval(timer);
+            }else{
+                Alerter.error('Erreur !', data.message);
+            }
+        }, "json");
+    }, 1000 * 15);    
+    
+    
+    $(".panel-body").find("input[type='checkbox']").prop('checked', false);
+    $(".panel-body").find("textarea").val('');
 
     ajouter = function(id){
         var url = "/main/dashboard/ajouter/";
@@ -57,6 +91,7 @@
                 rdv[$(element).attr("id")]= $(element).find("td select[name='rdv']").val();
             })
 
+            console.table(produits);
             console.table(produits_qte);
             console.table(substituts);
             console.table(substituts_qte);

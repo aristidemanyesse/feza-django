@@ -1,16 +1,18 @@
 
 class Alerter {
 
-	static success(title, message){
+	static success(title, message, timeOut = 3000) {
+		console.log(title, message, timeOut);
 		Loader.stop();
 		toastr.options = {
 			closeButton: true,
 			progressBar: true,
 			showMethod: 'slideDown',
-			timeOut: 3000
+			timeOut: timeOut
 		};
 		toastr.success(message, title);
 	}
+
 
 	static warning(title, message){
 		toastr.options = {

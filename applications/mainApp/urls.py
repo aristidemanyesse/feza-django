@@ -21,5 +21,6 @@ urlpatterns = [
     path('auth/ajax/reset/', ajax.reset),
     
     path('main/dashboard/ajouter/', ajax2.ajouter),
+    path('main/dashboard/check_demande/', ajax2.check_demande),
     path('main/dashboard/valider_demande/', ajax2.valider_demande),
 ]

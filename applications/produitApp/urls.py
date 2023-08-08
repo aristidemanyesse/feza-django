@@ -11,6 +11,7 @@ urlpatterns = [
     
     path('ajax/disponible/', ajax.disponible, name="disponible"),
     path('ajax/indisponible/', ajax.indisponible, name="indisponible"),
+    path('ajax/change_price/', ajax.change_price, name="change_price"),
     path('ajax/get/', ajax.get, name="get"),
 
     # path('fixtures/test/', views.features_test, name="features_test"),

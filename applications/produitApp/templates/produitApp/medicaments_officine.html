@@ -19,7 +19,7 @@
         <!-- begin col-12 -->
         <div class="col-md-12">
             <!-- begin panel -->
-            <div class="panel panel-inverse">
+            <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
                         <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
@@ -32,43 +32,36 @@
                         <thead>
                             <tr class="text-uppercase">
                                 <th>#</th>
-                                <th>Code barre</th>
                                 <th>Nom officiel</th>
                                 <th>type</th>
                                 <th>ordonnance</th>
                                 <th>forme</th>
                                 <th>voies d'administration</th>
-                                <th>Disponibilité</th>
+                                <th width="200px">Prix</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in prodoffs %}
                                 <tr class="odd gradeX">
-                                    <td><img src="{{item.produit.image.url}}" style="width: 40px"></td>
-                                    <td>{{ item.produit.codebarre }}</td>
+                                    <td><img src="{{item.produit.image.url}}" style="width: 20px"></td>
                                     <td class="text-bold">{{ item.produit.name }}</td>
                                     <td>{{ item.produit.type }}</td>
                                     <td>{{ item.produit.only_ordonnance }}</td>
                                     <td>{{ item.produit.forme }}</td>
                                     <td>{{ item.produit.voies }}</td>
-                                    <td><button onclick="indisponible('{{item.id }}')" class="btn btn-danger btn-sm btn-rounded"><i class="fa fa-close"></i> Plus en stock</button></td>
+                                    <td style="cursor:pointer" onclick="changePrice('{{item.id }}')"><b>{{ item.price }} Fcfa</b></td>
                                 </tr>
                             {% endfor %}
-                            <tr>
-                                <td colspan="8" class="text-center"> 
-                                    =+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+====+===+===+===+===+===+===+===+===
-                                </td>
-                            </tr>
+                      
                             {% for produit in produits %}
                                 <tr class="odd gradeX">
-                                    <td><img src="{{produit.image.url}}" style="width: 40px"></td>
-                                    <td>{{ produit.codebarre }}</td>
+                                    <td><img src="{{produit.image.url}}" style="width: 20px"></td>
                                     <td class="text-bold">{{ produit.name }}</td>
                                     <td>{{ produit.type }}</td>
                                     <td>{{ produit.only_ordonnance }}</td>
                                     <td>{{ produit.forme }}</td>
                                     <td>{{ produit.voies }}</td>
-                                    <td><button onclick="disponible('{{request.officine.id }}', '{{ produit.id }}')" class="btn btn-success btn-sm btn-rounded"><i class="fa fa-check"></i> Maintenant disponible</button></td>
+                                    <td style="cursor:pointer" onclick="changePrice('{{produit.id }}')"><b>{{ produit.price }} Fcfa</b> (NPSP)</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

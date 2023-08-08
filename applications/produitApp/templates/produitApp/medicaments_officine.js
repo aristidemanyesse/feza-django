@@ -35,6 +35,24 @@ $(function(){
         });
         return false;
     }
-
     
+    
+    changePrice = function(id){
+        var url = "/produits/ajax/change_price/";
+        alerty.prompt("Saisissez le prix actuel de ce médicament dans votre officine (ces modifications ne s'appliqueront qu'aux nouvelles demandes)", {
+            title: 'Changement de prix',
+            inputType : "number",
+            cancelLabel : "Annuler",
+            okLabel : "Changer le prix"
+        }, function(price){
+            Loader.start();
+            $.post(url, {id:id, price:price}, (data)=>{
+                if (data.status) {
+                    window.location.reload()
+                }else{
+                    Alerter.error('Erreur !', data.message);
+                }
+            },"json");
+        })
+    }
 })

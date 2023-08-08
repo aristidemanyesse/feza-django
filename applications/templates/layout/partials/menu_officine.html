@@ -20,7 +20,8 @@
         <ul class="nav">
             <li><a href="{% url 'mainApp:dashboard_officine' request.officine.id %}"><i class="fa fa-windows"></i> <span>Tableau de Bord</span></a></li>
             <li><a href="{% url 'produitApp:medicaments_officine' request.officine.id %}"><i class="fa fa-cubes"></i> <span>Nos Médicaments</span></a></li>
-            <li><a href="{% url 'officineApp:demandes' request.officine.id %}"><i class="fa fa-cubes"></i> <span>Les demandes</span></a></li>
+            <li><a href="{% url 'officineApp:demandes' request.officine.id %}"><i class="fa fa-list"></i> <span>Les demandes</span></a></li>
+            <li><a href="{% url 'officineApp:rdv' request.officine.id %}"><i class="fa fa-refresh"></i> <span>Rdv relances</span></a></li>
             <li><a href="{% url 'produitApp:medicaments' %}"><i class="fa fa-cogs"></i> <span>Paramètres</span></a></li>
         
             <!-- begin sidebar minify button -->

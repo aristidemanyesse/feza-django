@@ -13,12 +13,27 @@
     </ol>
     <!-- end breadcrumb -->
     <!-- begin page-header -->
-    <h1 class="page-header">Tableau de bord <small>IPI, Ici les Pharmacies Ivoiriennes</small></h1>
+    <h1 class="page-header">Tableau de bord </h1>
     <!-- end page-header -->
 
     
     <!-- begin row -->
-    <div class="row">
+    <div class="row m-b-lg">
+        <div class="col-md-4 text-center">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <img style="height: 20px" src="{% static 'dist/img/icons/logo.png' %}" alt="logo de IPI" /> IPI - Ici les Pharmacies Ivoiriennes
+                    </h4>
+                </div>
+            </div>
+            <br>
+            <img  style="height:60px" src="{% static 'dist/img/icons/pharma.png' %}" alt="" />
+            <h1 class="text-center">{{request.officine}}</h1>
+            <br>
+            <h4 class="text-center">{{request.officine.localisation}}</h4>
+            <h6 class="text-center">{{request.officine.contact}} / {{request.officine.contact2}}</h6>
+        </div>
         <div class="col-md-8">
             <div class="widget-chart with-sidebar bg-black">
                 <div class="widget-chart-content">
@@ -41,30 +56,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="panel panel-inverse" data-sortable-id="index-1">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        Cartographie rapide
-                    </h4>
-                </div>
-                <div class="">
-                    {{ markers|json_script:"markers-data" }}
-                    <div id="mymap"></div>
-                </div>
-            </div>
-        </div>
+      
     </div>
     <!-- end row -->
     
-
+    <br><br><br>
     <h2 class="page-header">Les demandes en attente <small>des plus recents aux plus anciens</small></h2>
 
     <!-- begin row -->
     <div class="row">
         {% for officinedemande in officinedemandes %}
         <div class="col-12">
-            <div class="panel panel-inverse" data-sortable-id="index-8">
+            <div class="panel panel-info" data-sortable-id="index-8">
                 <div class="panel-heading">
                     <div class="panel-heading-btn">
                         <a href="javascript:;" class="btn btn-sm btn-icon btn-circle btn-danger" onclick="delete_password('OfficineDemande', '{{officinedemande.id}}')" ><i class="fa fa-times"></i></a>
@@ -83,7 +86,7 @@
                                         <th style="border-right: 3px dashed grey;" class="text-center">dispo ?</th>
                                         <th  style="width:30%" >Produit de Substitut</th>
                                         <th style="width:130px">Qté substitut</th>
-                                        <th>Rdv relance</th>
+                                        <th>Rdv pour une relance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -146,6 +149,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-sm-8">
+                            <label style="font-style:italic">Commentaire pour le demandeur (optionel)</label>
                             <textarea class="form-control" rows="3" name="comment"></textarea>
                         </div>
                         <div class="col-sm-4 text-center">
@@ -163,66 +167,7 @@
 
 </div>
 
-<style>
-#mymap{
-    height: 300px !important;
-}
 
-
-.leaflet-popup {
-    width: 200px;
-  }
-  .leaflet-popup-content {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  .leaflet-popup-content-wrapper {
-    padding: 1em;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-  }
-  .leaflet-popup-tip-container {
-    width: 40px;
-    height: 20px;
-    position: absolute;
-    left: 50%;
-    margin-left: -20px;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .leaflet-popup-tip {
-    width: 17px;
-    height: 17px;
-    padding: 1px;
-    margin: -10px auto 0;
-    transform: rotate(45deg);
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #999;
-  }
-  .leaflet-popup-content h3 {
-    margin: 0 0 0.5em;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-  }
-  .leaflet-popup-content p {
-    margin: 0;
-  }
-  .leaflet-popup-content a {
-    display: block;
-    text-align: center;
-    margin-top: 1em;
-    color: #fff;
-    background-color: #3388ff;
-    border: none;
-    border-radius: 3px;
-    padding: 0.5em 1em;
-    text-decoration: none;
-  }
-</style>
 {% endblock "content" %}
 
 
@@ -232,43 +177,6 @@
             {% include "./dashboard_officine.js" %}
             DashboardV2.init();
             FormPlugins.init();
-
-
-            var mymap = L.map('mymap').setView([7.561891, -5.376317], 6);
-    
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                maxZoom: 22,
-                tileSize: 512,
-                zoomOffset: -1
-            }).addTo(mymap);
-    
-            var customIcon = L.icon({
-                iconUrl: "{% static 'dist/img/icons/Rond_rouge.png' %}",
-                iconSize: [7, 7],
-                iconAnchor: [16, 16],
-                popupAnchor: [0, -16]
-            });
-    
-            const markers = JSON.parse(document.getElementById("markers-data").textContent)
-            console.log(markers["features"])
-            var markersLayer = L.markerClusterGroup();
-    
-            for (var item of markers["features"]) {
-                console.log(item)
-                var marker = L.geoJSON(item, {
-                    pointToLayer: function (feature, latlng) {
-                    return L.marker(latlng, { icon: customIcon });
-                    },
-                }).addTo(mymap);
-                markersLayer.addLayer(marker);
-                var popupContent = '<div style="padding: 1em;">' +
-                    '<h3 style="margin: 0 0 0.5em;">Titre du popup</h3>' +
-                    '<p style="margin: 0;">Contenu du popup</p>' +
-                    '</div>';
-                marker.bindPopup(popupContent);
-            }
-            mymap.addLayer(markersLayer);
         });
     </script>
 {% endblock "scriptjs" %}

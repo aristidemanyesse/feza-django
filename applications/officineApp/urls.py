@@ -2,7 +2,7 @@
 from django.shortcuts import redirect
 from django.urls import path
 
-from . import views
+from . import views, ajax
 
 app_name = "officineApp"
 urlpatterns = [
@@ -13,5 +13,8 @@ urlpatterns = [
     # path('fixtures/<int:year>/<int:month>/<int:day>/', views.fixtures, name="fixtures"),
     path('officine/<uuid:id>/', views.officine, name="officine"),
     path('demandes/<uuid:id>/', views.demandes, name="demandes"),
+    path('rdv/<uuid:id>/', views.rdv, name="rdv"),
+    
+    path('demandes/rdv/valider_rdv/', ajax.valider_rdv, name="valider_rdv"),
 
 ]

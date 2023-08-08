@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from annoying.decorators import render_to
+from demandeApp.models import RdvLigneReponse
+from officineApp.routes import degrees_to_meters
 from officineApp.models import *
 import json
+from django.db.models import F
+
+from django.contrib.gis.db.models.functions import Distance
 from django.shortcuts import redirect, get_object_or_404
 from django.core.serializers import serialize
 # Create your views here.
@@ -71,12 +76,28 @@ def responsables(request):
 def demandes(request, id):
     if request.method == "GET":
         officine = get_object_or_404(Officine, pk=id)
-        demandes = officine.officine_demande.filter(deleted = False).order_by("-created_at")
-        print(demandes)
-        # produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT)).exclude(id__in = prodoffs.values_list('produit', flat = True)).order_by("name")
+        demandes = officine.officine_demande.filter(deleted = False, propagated = True).order_by("-created_at")
+        for demande in demandes:
+            demande.distance = demande.officine.geometry.distance(Point(demande.demande.lon, demande.demande.lat, srid=4326))
+            demande.distance = round(degrees_to_meters(demande.distance), 2)
+            if demande.distance < 1000:
+                demande.distance = f"{demande.distance} m"
+            else:
+                demande.distance = f"{round(demande.distance / 1000, 1)} km"
         ctx = {
-            "demandes" : demandes,
-            # "produits": produits,
-           
+            "demandes" : demandes,          
+        }
+        return ctx
+
+    
+    
+
+@render_to('officineApp/rdv.html')
+def rdv(request, id):
+    if request.method == "GET":
+        officine = get_object_or_404(Officine, pk=id)
+        rdv = RdvLigneReponse.objects.filter(deleted =False, ligne__reponse__demande__officine = officine).order_by("-created_at", "valide")
+        ctx = {
+            "rdv" : rdv,          
         }
         return ctx

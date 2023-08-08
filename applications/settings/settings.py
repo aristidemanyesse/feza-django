@@ -101,23 +101,23 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     
-    # 'default': {
-    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-    #     'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
-    #     'PORT'      : os.getenv("DB_PORT", 3306),
-    #     'USER'      : os.getenv("DB_USER", "root"),
-    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
-    #     'NAME'      : os.getenv("DB_NAME", "ipi"),
-    # },
-    
     'default': {
         'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
         'PORT'      : os.getenv("DB_PORT", 3306),
-        'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
-        'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+        'USER'      : os.getenv("DB_USER", "root"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+        'NAME'      : os.getenv("DB_NAME", "ipi"),
     },
+    
+    # 'default': {
+    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+    #     'HOST'      : os.getenv("DB_HOST", "aristidemanyesse.mysql.pythonanywhere-services.com"),
+    #     'PORT'      : os.getenv("DB_PORT", 3306),
+    #     'USER'      : os.getenv("DB_USER", "aristidemanyesse"),
+    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "MerciSeigneur21"),
+    #     'NAME'      : os.getenv("DB_NAME", "aristidemanyesse$feza"),
+    # },
 }
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
@@ -201,12 +201,11 @@ GRAPHENE = {
     ]
 }
 
-CRON_LOG_DIR = os.path.join(BASE_DIR, "logs", "garde1.log")
 CRONJOBS = [
     # ('0 10 * * 5', 'officineApp.cron.create_garde', f'>> {os.path.join(BASE_DIR, "/logs/garde.log")}'),
-    ('*/1 * * * *', 'officineApp.cron.create_garde', f'>> {CRON_LOG_DIR}'),
+    ('*/10 * * * *', 'officineApp.cron.create_garde', '>> {}'.format(os.path.join(BASE_DIR, "logs/create_garde.log"))),
+    ('*/1 * * * *', 'officineApp.cron.propagation_demande', '>> {}'.format(os.path.join(BASE_DIR, "logs/propagation_demande.log"))),
 ]
-
 
 # # Configurer le scheduler
 # from officineApp.cron import create_garde

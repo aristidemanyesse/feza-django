@@ -11,7 +11,7 @@
     </ol>
     <!-- end breadcrumb -->
     <!-- begin page-header -->
-    <h1 class="page-header">Liste des demandes </h1>
+    <h1 class="page-header">Planification des relances </h1>
     <!-- end page-header -->
 
 
@@ -25,47 +25,44 @@
                         <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
                         <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
                     </div>
-                    <h4 class="panel-title">Toutes les demandes</h4>
+                    <h4 class="panel-title">
+                        Planification des relances demandeurs
+                    </h4>
                 </div>
                 <div class="panel-body">
                     <table id="data-table" class="table table-striped table-hover">
                         <thead>
                             <tr class="text-uppercase">
-                                <th>Date</th>
-                                <th>Produits</th>
-                                <th>ordonnance</th>
-                                <th>commentaire</th>
-                                <th>Distance</th>
                                 <th>Etat</th>
-                                <th>Validée le</th>
+                                <th>Date</th>
+                                <th>Médicaments</th>
+                                <th>quantite</th>
+                                <th>Demandeur</th>
+                                <th>Valider</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in demandes %}
+                            {% for item in rdv %}
                                 <tr class="odd gradeX">
-                                    <td>{{ item.created_at }}</td>
                                     <td>
-                                        {% if item.demande.ordonnance %}
-                                        <a href="{{ item.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
-                                            <img src="{{item.demande.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{item.demande.demande_lignes.filter.count}} médicaments</td>
-                                    <td>{{ item.demande.commentaire }}</td>
-                                    <td>{{ item.distance }}</td>
-                                    <td>
-                                        {% if item.propagated and item.is_valided is None %}
+                                        {% if item.valide %}
+                                            <label class="label label-success">Validé</label>
+                                        {% else  %}
                                             <label class="label label-warning">En attente</label>
-                                        {% elif item.propagated and not item.is_valided %}
-                                            <label class="label label-danger">Expiréé</label>
-                                        {% elif item.propagated and item.is_valided %}
-                                            <label class="label label-success">Validée</label>
                                         {% endif %}  
                                     </td>
+                                    <td>{{ item.created_at }}</td>
+                                    <td>{{ item.ligne.produit}}</td>
+                                    <td>x{{ item.ligne.quantite}}</td>
                                     <td>
-                                        {% if item.is_valided %}
-                                            {{ item.update_at }}
+                                        <b>{{ item.ligne.reponse.demande.demande.utilisateur.circonscription}}</b><br/>
+                                        <span>{{ item.ligne.reponse.demande.demande.utilisateur.contact}}</span>
+                                    </td>
+                                    <td>
+                                        {% if item.valide %}
+                                            {{ item.valided_date }}
+                                        {% else %}
+                                        <button onclick="valider_rdv('{{item.id }}')" class="btn btn-primary btn-sm btn-rounded"><i class="fa fa-refresh"></i> Relancer le demandeur</button>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -92,7 +89,7 @@
 <script>
     $(document).ready(function() {
         TableManageDefault.init();
-        {% comment %} {% include "./demande.js" %} {% endcomment %}
+        {% include "./rdv.js" %}
     });
 </script>
 {% endblock "scriptjs" %}

@@ -2,7 +2,7 @@ from UserApp.models import *
 from demandeApp.models import *
 from django.http.response import HttpResponse, JsonResponse
 import json
-
+from datetime import datetime
 from produitApp.models import ProduitInOfficine
 
 def ajouter(request):
@@ -22,6 +22,23 @@ def ajouter(request):
                 </tr>
             """
         return HttpResponse(response)
+
+
+def check_demande(request):
+    if request.method == "POST":
+        try:
+            date = request.session.get("last_checked_date", str(datetime.now()))
+            print(date)
+            demandes = request.officine.officine_demande.filter(deleted=False, created_at__lte = date)
+            # request.session["last_checked_date"] = datetime.now()
+            if demandes.count() > 0:
+                return JsonResponse({"status":True})
+
+            return HttpResponse("")
+        
+        except Exception as e :
+            print("Error check_demande: " + str(e))
+            return JsonResponse({"status":False, "message":"Problème de mise à jour des demandes !"})
 
 
 
@@ -49,8 +66,9 @@ def valider_demande(request):
                     if status:
                         total += pio.price * ligne.quantite if status else 0
                     else:
-                        for key, value in substituts.items():
-                            if key == str(produit.id):
+                        for key in substituts:
+                            value = substituts[key]
+                            if key == str(produit.id) and value != "":
                                 _produit = Produit.objects.get(id = value)
                                 pio, created = ProduitInOfficine.objects.get_or_create(officine=demande.officine, produit=_produit)
                                 sub = SubsLigneReponse.objects.create(ligne=ligne, produit=_produit, quantite = int(substituts_qte[str(produit.id)]), price = pio.price)
@@ -65,7 +83,7 @@ def valider_demande(request):
                 reponse.price = total
                 reponse.save()
                 
-            demande.status = True
+            demande.is_valided = True
             demande.save()
             return JsonResponse({"status":True})
         

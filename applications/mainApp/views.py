@@ -73,7 +73,7 @@ def dashboard(request):
 def dashboard_officine(request, id):
     if request.method == "GET":
         officine = get_object_or_404(Officine, pk=id)
-        demandes = officine.officine_demande.filter(deleted = False, status = False, created_at__date= datetime.today())
+        demandes = officine.officine_demande.filter(deleted = False, is_valided = None)
         produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
         ctx = {
             "officine": officine,
