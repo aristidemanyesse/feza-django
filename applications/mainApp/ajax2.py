@@ -28,7 +28,6 @@ def check_demande(request):
     if request.method == "POST":
         try:
             date = request.session.get("last_checked_date", str(datetime.now()))
-            print(date)
             demandes = request.officine.officine_demande.filter(deleted=False, created_at__lte = date)
             # request.session["last_checked_date"] = datetime.now()
             if demandes.count() > 0:

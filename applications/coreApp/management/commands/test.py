@@ -19,8 +19,7 @@ class Command(BaseCommand):
     help = "Runs APScheduler."
 
     def handle(self, *args, **options):
-        ProduitInOfficine.objects.all().delete()
-        for produit in Produit.objects.all():
+        for produit in Produit.objects.filter(price = None):
             print(produit.name)
             produit.price = random.randint(500, 15000)
             produit.save()

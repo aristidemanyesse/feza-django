@@ -1495,3 +1495,9 @@ Propagating
 Propagating
 Propagating
 Propagating
+Error creating_garde by cron: (2005, "Unknown MySQL server host 'db.manyesse.tech' (-2)")
+Error creating_garde by cron: (2005, "Unknown MySQL server host 'db.manyesse.tech' (-2)")
+Error creating_garde by cron: (1044, "Access denied for user 'admin'@'%' to database 'ipi'")
+Error creating_garde by cron: (1044, "Access denied for user 'admin'@'%' to database 'ipi'")
+Error creating_garde by cron: (1044, "Access denied for user 'admin'@'%' to database 'ipi'")
+Error creating_garde by cron: (1044, "Access denied for user 'admin'@'%' to database 'ipi'")

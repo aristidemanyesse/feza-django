@@ -101,12 +101,21 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     
+    # 'default': {
+    #     'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
+    #     'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
+    #     'PORT'      : os.getenv("DB_PORT", 3306),
+    #     'USER'      : os.getenv("DB_USER", "root"),
+    #     'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+    #     'NAME'      : os.getenv("DB_NAME", "ipi"),
+    # },
+    
     'default': {
         'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
+        'HOST'      : os.getenv("DB_HOST", "192.162.71.45"),
         'PORT'      : os.getenv("DB_PORT", 3306),
         'USER'      : os.getenv("DB_USER", "root"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "1sd48ds5ds45"),
         'NAME'      : os.getenv("DB_NAME", "ipi"),
     },
     
@@ -168,7 +177,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
-
+CSRF_TRUSTED_ORIGINS = ['https://officines.ipi-app.com']
 
 LOGIN_URL = "/auth/login/"
 

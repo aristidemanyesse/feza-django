@@ -11,7 +11,8 @@ class DemandeType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "utilisateur__id": ("exact",),
-            "status": ("exact", ),
+            "propagating": ("exact", ),
+            "is_finished": ("exact", ),
         }
 
 
@@ -24,7 +25,8 @@ class OfficineDemandeType(DjangoSerializerType):
             "id": ("exact", ),
             "deleted": ("exact", ),
             "demande__id": ("exact",),
-            "status": ("exact", ),
+            "is_valided": ("exact", ),
+            "propagated": ("exact", ),
             "officine__id": ("exact",),
             "officine__circonscription__id": ("exact",),
         }
@@ -93,5 +95,6 @@ class RdvLigneReponseType(DjangoSerializerType):
             "ligne__reponse__demande__demande__utilisateur__id": ("exact",),
             "days": ("exact",),
             "valide": ("exact", ),
+            "valided_date": ("exact", "lte", "gte" ),
         }
 
