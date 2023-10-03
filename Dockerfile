@@ -1,29 +1,15 @@
-FROM ubuntu:22.04
+FROM  osgeo/gdal:ubuntu-small-3.6.3
 
-RUN apt update \
-&& apt-get install -y cron nano fuseiso \
-&& apt-get install -y default-libmysqlclient-dev  -y \
-&& apt install python3-pip -y --fix-missing
-RUN apt-get install binutils libproj-dev gdal-bin -y
+RUN apt-get update && apt-get install -y python3-pip default-libmysqlclient-dev build-essential
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+COPY requirements.txt /app/requirements.txt
 
-COPY ./requirements.txt /code/
-COPY ./start.sh /code/
-WORKDIR /code
+RUN pip3 install --no-cache-dir  -r /app/requirements.txt
 
-RUN pip3 install -r requirements.txt
+COPY ./ /app/
 
-COPY ./applications /code/
+WORKDIR /app/source/
 
 EXPOSE 8000
 
-USER root
-
-RUN chmod +x ./start.sh
-
-ENTRYPOINT ["./start.sh"]
-
-# docker build -t hub.jool-tech.com/library/fenopjerci-server:1.0 .
-# docker run hub.jool-tech.com/library/fenopjerci-server:2.8 .
-# docker push hub.jool-tech.com/library/fenopjerci-server:1.0 
+CMD ["sh", "-c", "python manage.py crontab add && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

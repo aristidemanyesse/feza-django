@@ -1,0 +1,201 @@
+{% extends 'layout/base.html' %}
+{% load myfilters %}
+{% load static %}
+{% load leaflet_tags %}
+{% load humanize %}
+
+
+{% block "content" %}
+<div id="content" class="content">
+    <!-- begin breadcrumb -->
+    <ol class="breadcrumb pull-right">
+        <li class="active">Tableau de bord</li>
+    </ol>
+    <!-- end breadcrumb -->
+    <!-- begin page-header -->
+    <h1 class="page-header">Tableau de bord </h1>
+    <!-- end page-header -->
+
+    
+    <!-- begin row -->
+    <div class="row m-b-lg">
+        <div class="col-md-4 text-center">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <img style="height: 20px" src="{% static 'dist/img/icons/logo.png' %}" alt="logo de IPI" /> IPI - Ici les Pharmacies Ivoiriennes
+                    </h4>
+                </div>
+            </div>
+            <br>
+            <img  style="height:60px" src="{% static 'dist/img/icons/pharma.png' %}" alt="" />
+            <h1 class="text-center">{{request.officine}}</h1>
+            <br>
+            <h4 class="text-center">{{request.officine.localisation}}</h4>
+            <h6 class="text-center">{{request.officine.contact}} / {{request.officine.contact2}}</h6>
+        </div>
+        <div class="col-md-8">
+            <div class="widget-chart with-sidebar bg-black">
+                <div class="widget-chart-content">
+                    <h4 class="chart-title">
+                        Graphisme de comparaison
+                        <small>Comparaison entre le nombre d'utilisateurs et le nombre de requettes effectuées</small>
+                    </h4>
+                    <div id="visitors-line-chart" class="morris-inverse" style="height: 260px;"></div>
+                </div>
+                <div class="widget-chart-sidebar bg-black-darker">
+                    <div class="chart-number">
+                        {{demandes_semaine|length|start0}}
+                        <small>demandes cette semaine</small>
+                    </div>
+                    <div id="visitors-donut-chart" style="height: 160px"></div>
+                    <ul class="chart-legend">
+                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> 34.0% <span>ont validé</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> 56.0% <span>en attente</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+    <!-- end row -->
+    
+    <br><br><br>
+    <h2 class="page-header">Les demandes en attente <small>des plus recents aux plus anciens</small></h2>
+
+    <!-- begin row -->
+    <div class="row">
+        {% for officinedemande in officinedemandes %}
+        <div class="col-12">
+            <div class="panel panel-info" data-sortable-id="index-8">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-sm btn-icon btn-circle btn-danger" onclick="delete_password('OfficineDemande', '{{officinedemande.id}}')" ><i class="fa fa-times"></i></a>
+                    </div>
+                    <h4 class="panel-title">{{officinedemande.created_at|naturaltime}}</h4>
+                </div>
+                <div class="panel-body" id="{{officinedemande.id}}">
+                    <div class="row">
+                        {%  if officinedemande.demande.ordonnance %}
+                        <div class="col-sm-2 text-center">
+                            <a href="{{ officinedemande.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                <img src="{{ officinedemande.demande.ordonnance.url }}"   style="width: 100%"  alt="ordonnance" />
+                            </a>
+                            <br><br>
+                            <span>ordonnance</span>
+                        </div>
+                        
+                        <div class="col-sm-10">
+                        {% else %}
+                            <div class="col-sm-12">
+                        {% endif %}
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" style="width:35%">Désignation</th>
+                                        <th style="width:30px">Qté</th>
+                                        <th style="width:130px;">Qté disponible</th>
+                                        <th style="border-right: 3px dashed grey;" class="text-center">dispo ?</th>
+                                        <th  style="width:30%" >Produit de Substitut</th>
+                                        <th style="width:130px">Qté substitut</th>
+                                        <th>Rdv pour une relance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in officinedemande.demande.demande_lignes.all %}
+                                        <tr class="odd gradeX" id="{{item.produit.id}}">
+                                            <td><img src="{{ item.produit.image.url }}" style="width: 20px"></td>
+                                            <td style="font-size:11px; font-weight:bold">{{ item.produit.name }}</td>
+                                            <td style="font-size:11px; font-weight:bold">x {{ item.quantite }}</td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <input type="number" name="qte" class="form-control input-sm" value="{{ item.quantite }}" min="1" />
+                                            </td>
+                                            <td style="border-right: 3px dashed grey">
+                                                <input type="checkbox" class="form-control input-xs" value="" />
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <select name="substitut" class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                                        <option value="">------------</option>
+                                                        {% for produit in produits %}
+                                                            <option value="{{produit.id}}">{{produit.name}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <input type="number"  name="substitut_qte" class="form-control input-sm" value="{{ item.quantite }}" min="1" />
+                                                </div>
+                                            </td>
+                                            <td style="font-size:11px; font-weight:bold">
+                                                <div class="hidde">
+                                                    <select name="rdv" class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                                        <option value="0">------------</option>
+                                                        <option value="1">disponible demain</option>
+                                                        <option value="2">disponible après-demain</option>
+                                                        <option value="5">disponible dans 5 jours</option>
+                                                        <option value="7">disponible dans 1 semaine</option>
+                                                        <option value="14">disponible dans 2 semaine</option>
+                                                        <option value="30">disponible dans 1 mois</option>
+                                                        <option value="60">disponible dans 2 mois</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <p>{{officinedemande.demande.commentaire}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <select class="form-control selectpicker produits" data-size="10" data-live-search="true" data-style="btn-default" >
+                                        {% for produit in produits %}
+                                            <option value="{{produit.id}}">{{produit.name}}</option>
+                                        {% endfor %}'{{demande.id}}'
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button class="btn btn-default m-r-5" onclick="ajouter('{{officinedemande.id}}')"> Ajouter Médicament d'ordonnance</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label style="font-style:italic">Commentaire pour le demandeur (optionnel)</label>
+                            <textarea class="form-control" rows="3" name="comment"></textarea>
+                            <br>
+                            <div class="text-right">
+                                <button class="btn btn-success m-r-5" onclick="validerDemande('{{officinedemande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- end row -->
+
+
+</div>
+
+
+{% endblock "content" %}
+
+
+{% block "scriptjs" %}
+    <script>
+        $(document).ready(function() {
+            {% include "./dashboard_officine.js" %}
+            DashboardV2.init();
+            FormPlugins.init();
+        });
+    </script>
+{% endblock "scriptjs" %}
