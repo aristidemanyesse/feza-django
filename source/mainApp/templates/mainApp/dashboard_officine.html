@@ -23,7 +23,7 @@
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <img style="height: 20px" src="{% static 'dist/img/icons/logo.png' %}" alt="logo de IPI" /> IPI - Ici les Pharmacies Ivoiriennes
+                        <img style="height: 20px" src="{% static 'dist/img/icons/logo.png' %}" alt="logo de iPi" /> iPi - Ici les Pharmacies Ivoiriennes
                     </h4>
                 </div>
             </div>
@@ -50,8 +50,8 @@
                     </div>
                     <div id="visitors-donut-chart" style="height: 160px"></div>
                     <ul class="chart-legend">
-                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> 34.0% <span>ont validé</span></li>
-                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> 56.0% <span>en attente</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> {{demandes_validees|length|start0}} <span>ont été validé</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> {{demandes_ignorees|length|start0}} <span> ignorées</span></li>
                     </ul>
                 </div>
             </div>
@@ -151,28 +151,32 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-sm-7">
+                        <div class="col-sm-6">
+                            {% if officinedemande.demande.ordonnance  %}
                             <div class="row">
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     <select class="form-control selectpicker produits" data-size="10" data-live-search="true" data-style="btn-default" >
                                         {% for produit in produits %}
                                             <option value="{{produit.id}}">{{produit.name}}</option>
                                         {% endfor %}'{{demande.id}}'
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
-                                    <button class="btn btn-default m-r-5" onclick="ajouter('{{officinedemande.id}}')"> Ajouter Médicament d'ordonnance</button>
+                                <div class="col-sm-5">
+                                    <button class="btn btn-default m-r-5" onclick="ajouter('{{officinedemande.id}}')"> Ajouter Médicament</button>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
-                        <div class="col-sm-5">
-                            <label style="font-style:italic">Commentaire pour le demandeur (optionnel)</label>
-                            <textarea class="form-control" rows="3" name="comment"></textarea>
-                            <br>
-                            <div class="text-right">
-                                <button class="btn btn-success m-r-5" onclick="validerDemande('{{officinedemande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <textarea placeholder="Commentaire pour le demandeur (optionnel)" class="form-control" rows="3" name="comment"></textarea>
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <button class="btn btn-success m-r-5" onclick="validerDemande('{{officinedemande.id}}')"><i class="fa fa-check"></i> Valider la reponse</button>
+                                </div>
+                                <br>
                             </div>
-                            <br>
                         </div>
                     </div>
                     
@@ -184,6 +188,39 @@
     <!-- end row -->
 
 
+
+    <div class="modal fade" id="modal-medicament">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Choix de Médicament</h4>
+                </div>
+                <form id="formMedicament" method="POST">
+                    <div class="modal-body" style="padding: 5% ">
+                        <br />
+                        <p class="text-center" >Veuillez choisir le médicament qui vous intéresse !</p><br />
+                        <div class="form-group">
+                            <select name="substitut" class="form-control selectpicker" data-size="10" data-live-search="true" data-style="btn-default" >
+                                <option value="">------------</option>
+                                {% for produit in produits %}
+                                    <option value="{{produit.id}}">{{produit.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-md btn-white" data-dimdiss="modal">Annuler</button>
+                        <button type="button" onclick="valideMedicamentChoice()" class="btn btn-md btn-primary">Valider le choix</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    
 </div>
 
 
@@ -194,8 +231,41 @@
     <script>
         $(document).ready(function() {
             {% include "./dashboard_officine.js" %}
-            DashboardV2.init();
             FormPlugins.init();
+
+            var months = ["Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"];
+
+                var data = [
+                {% for key in demandes_par_mois %}
+                    { m: "{{key}}", a: {{demandes_par_mois|dict_value:key}}, b: {{validees_par_mois|dict_value:key}}},
+                {% endfor %}]
+
+            config = {
+                data: data,
+                xkey: 'm',
+                ykeys: ["a", "b"],
+                xLabelFormat: function(x) {
+                    // Get valid index using x.getMonth()
+                    var month = months[x.getMonth()];
+                    return month;
+                  },
+                  dateFormat: function(x) {
+                    var month = months[new Date(x).getMonth()];
+                    return month;
+                  },
+                labels: ['Demandes reçues', 'Total validées'],
+                fillOpacity: 0.6,
+                hideHover: 'auto',
+                behaveLikeLine: true,
+                resize: true,
+                pointFillColors:['#126FBB'],
+                pointStrokeColors: ['black'],
+                lineColors:['gray','green']
+            };
+            config.element = 'visitors-line-chart';
+            Morris.Line(config);
         });
     </script>
 {% endblock "scriptjs" %}
+
+

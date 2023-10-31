@@ -52,7 +52,7 @@ class OfficineAppQuery(object):
     search_officine_de_garde = OfficineDeGardeType.ListField(action=graphene.String(default_value="search_officine_de_garde"))
     
     
-    search_officine_distance = graphene.List(OfficineDistanceType, id=graphene.String(), longitude=graphene.Float(), latitude=graphene.Float())
+    search_officine_distance = graphene.Field(OfficineDistanceType, id=graphene.String(), longitude=graphene.Float(), latitude=graphene.Float())
     def resolve_search_officine_distance (root, info, id, longitude, latitude, **kwargs):
         point = Point(longitude, latitude, srid=4326)
         officine = Officine.objects.filter(id = id).annotate(distance=Distance('geometry', point)).first()

@@ -12,7 +12,7 @@
     </ol>
     <!-- end breadcrumb -->
     <!-- begin page-header -->
-    <h1 class="page-header">Tableau de bord <small>IPI, Ici les Pharmacies Ivoiriennes</small></h1>
+    <h1 class="page-header">Tableau de bord <small>iPi, Ici les Pharmacies Ivoiriennes</small></h1>
     <!-- end page-header -->
     <!-- begin row -->
     <div class="row">
@@ -63,7 +63,7 @@
             <div class="widget widget-stats bg-red">
                 <div class="stats-icon"><i class="fa fa-clock-o"></i></div>
                 <div class="stats-info">
-                    <h4 class="text-uppercase">Demandes aujourd'hui</h4>
+                    <h4 class="text-uppercase">Demandes (7 jours)</h4>
                     <p>{{demandes|length|start0}}</p>	
                 </div>
                 <div class="stats-link">
@@ -88,13 +88,13 @@
                 </div>
                 <div class="widget-chart-sidebar bg-black-darker">
                     <div class="chart-number">
-                        {{users|length|start0}}
-                        <small>utilisateurs cette semaine</small>
+                        {{demandes|length|start0}}
+                        <small>demandes cette semaine</small>
                     </div>
                     <div id="visitors-donut-chart" style="height: 160px"></div>
                     <ul class="chart-legend">
-                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> 34.0% <span>ont validé</span></li>
-                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> 56.0% <span>en attente</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-success m-r-5"></i> {{demandes_validees|length|start0}} <span>ont été validé</span></li>
+                        <li><i class="fa fa-circle-o fa-fw text-primary m-r-5"></i> {{demandes_ignorees|length|start0}} <span>en attente</span></li>
                     </ul>
                 </div>
             </div>
@@ -116,11 +116,20 @@
     <!-- end row -->
 </div>
 
+<div class="alerter">
+    <span>Médicaments</span>
+</div>
+
 <style>
 #mymap{
     height: 300px !important;
 }
 
+.alerter{
+    z-index: 100000000;
+    position: fixed;
+    bottom: 100px;
+}
 
 .leaflet-popup {
     width: 200px;
@@ -182,14 +191,14 @@
 {% block "scriptjs" %}
     <script>
         $(document).ready(function() {
-            DashboardV2.init();
             var mymap = L.map('mymap').setView([7.561891, -5.376317], 6);
     
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                attribution: 'iPi',
                 maxZoom: 22,
                 tileSize: 512,
-                zoomOffset: -1
+                zoomOffset: -1,
+                subdomains:['mt0','mt1','mt2','mt3']
             }).addTo(mymap);
     
             var customIcon = L.icon({
@@ -218,6 +227,40 @@
                 marker.bindPopup(popupContent);
             }
             mymap.addLayer(markersLayer);
+
+
+            var months = ["Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"];
+
+                var data = [
+                {% for key in demandes_par_mois %}
+                    { m: "{{key}}", a: {{demandes_par_mois|dict_value:key}}, b: {{validees_par_mois|dict_value:key}}},
+                {% endfor %}]
+
+            config = {
+                data: data,
+                xkey: 'm',
+                ykeys: ["a", "b"],
+                xLabelFormat: function(x) {
+                    // Get valid index using x.getMonth()
+                    var month = months[x.getMonth()];
+                    return month;
+                  },
+                  dateFormat: function(x) {
+                    var month = months[new Date(x).getMonth()];
+                    return month;
+                  },
+                labels: ['Demandes reçues', 'Total validées'],
+                fillOpacity: 0.6,
+                hideHover: 'auto',
+                behaveLikeLine: true,
+                resize: true,
+                pointFillColors:['#126FBB'],
+                pointStrokeColors: ['black'],
+                lineColors:['gray','green']
+            };
+            config.element = 'visitors-line-chart';
+            Morris.Line(config);
+
         });
     </script>
 {% endblock "scriptjs" %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from annoying.decorators import render_to
-from demandeApp.models import RdvLigneReponse
+from demandeApp.models import Demande, RdvLigneReponse
 from officineApp.routes import degrees_to_meters
 from officineApp.models import *
 import json
@@ -84,6 +84,19 @@ def demandes(request, id):
                 demande.distance = f"{demande.distance} m"
             else:
                 demande.distance = f"{round(demande.distance / 1000, 1)} km"
+        ctx = {
+            "demandes" : demandes,          
+        }
+        return ctx
+    
+
+    
+    
+
+@render_to('officineApp/demandes_genarales.html')
+def demandes_genarales(request):
+    if request.method == "GET":
+        demandes = Demande.objects.filter(deleted = False).order_by("-created_at")
         ctx = {
             "demandes" : demandes,          
         }

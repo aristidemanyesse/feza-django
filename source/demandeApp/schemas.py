@@ -55,6 +55,7 @@ class ReponseType(DjangoSerializerType):
             "demande__id": ("exact",),
             "demande__demande__id": ("exact",),
             "demande__officine__id": ("exact",),
+            "created_at": ("lte", "gte"),
         }
 
 

@@ -40,8 +40,9 @@ def propagate(demande):
         demande.save()
         return True
     
-    distance_plus_eloinée = round(degrees_to_meters(off_dem.last().distance), 2)
-    if distance_plus_eloinée <= 1500:
+    distance_plus_eloignee = round(degrees_to_meters(off_dem.last().distance), 2)
+    distance_plus_courte = round(degrees_to_meters(off_dem.first().distance), 2)
+    if distance_plus_eloignee <= 1500:
         for off in off_dem:
             off.propagated = True
             off.save()
@@ -51,11 +52,14 @@ def propagate(demande):
     else:
         rayon = 1500
         minutes = 5
-        tours = math.ceil(distance_plus_eloinée / rayon)
+        
+        offset = (distance_plus_courte // rayon) * rayon
+        distance = distance_plus_eloignee - offset
+        tours = math.ceil(distance / rayon)
         i = 1
         while i <= tours:
             for off in off_dem:
-                if ((i-1) * rayon) < round(degrees_to_meters(off.distance), 2) <= (i * rayon):
+                if ((i-1) * rayon + offset) < round(degrees_to_meters(off.distance), 2) <= (i * rayon + offset):
                     off.propagated = True
                     off.save()
             i += 1

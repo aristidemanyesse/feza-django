@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import get_object_or_404
 from annoying.decorators import render_to
-import json
+import json, os
 from django.core.serializers import serialize
 from django.contrib.auth import authenticate, logout
 from demandeApp.models import *
-from officineApp.models import TypeOfficine
-
-from officineApp.models import Officine
+from officineApp.models import TypeOfficine, Officine
 from produitApp.models import *
 from UserApp.models import *
+from settings.settings import BASE_DIR
 from .models import *
 from datetime import datetime, timedelta
+from collections import defaultdict
+
 # Create your views here.
 
 
@@ -51,17 +52,40 @@ def dashboard(request):
         return redirect("mainApp:dashboard_officine", request.officine.id)
         
     if request.method == "GET":
-        officines = Officine.objects.filter(deleted = False, type  = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
-        markers = json.loads(serialize("geojson", officines))
-        produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
-        users = Utilisateur.objects.filter(deleted = False)
-        demandes = Demande.objects.filter(deleted = False, created_at__date= datetime.today())
+        officines   = Officine.objects.filter(deleted = False, type  = TypeOfficine.objects.get(etiquette = TypeOfficine.PHARMACIE))
+        markers     = json.loads(serialize("geojson", officines))
+        produits    = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
+        users       = Utilisateur.objects.filter(deleted = False)
+        demandes    = Demande.objects.filter(deleted = False, created_at__gte = datetime.now() - timedelta(days=7))
+        
+        demandes_validees = demandes.filter(is_finished = True)
+        demandes_ignorees = demandes.exclude(is_finished = True)
+
+        
+        demandes_par_mois = {}
+        validees_par_mois = {}
+
+        # Parcourir les ventes et agréger par mois
+        for demande in Demande.objects.filter(deleted = False).order_by('created_at'):
+            date_demande = datetime.strptime(str(demande.created_at.date()), "%Y-%m-%d")
+            mois_demande = date_demande.strftime("%Y-%m")  # Nom du mois en français
+            try:
+                demandes_par_mois[mois_demande] += 1
+                validees_par_mois[mois_demande] += 1 if demande.is_finished else 0
+            except KeyError:
+                demandes_par_mois[mois_demande] = 0
+                validees_par_mois[mois_demande] = 0
+                
         ctx = {
             "officines": officines,
             "produits": produits,
             "users": users,
             "demandes": demandes,
-            "markers": markers
+            "markers": markers,
+            "demandes_validees": demandes_validees,
+            "demandes_ignorees": demandes_ignorees,
+            "demandes_par_mois": demandes_par_mois,
+            "validees_par_mois": validees_par_mois,
         }
         return ctx
         
@@ -69,19 +93,51 @@ def dashboard(request):
 
 
         
+        
 @render_to('mainApp/dashboard_officine.html')
 def dashboard_officine(request, id):
     if request.method == "GET":
         officine = get_object_or_404(Officine, pk=id)
-        demandes = officine.officine_demande.filter(deleted = False, is_valided = None)
-        demandes_semaine = officine.officine_demande.filter(deleted = False, created_at__gte = datetime.now() - timedelta(days=7))
+        demandes = officine.officine_demande.filter(deleted = False, propagated = True)
+        demandes_semaine = demandes.filter(deleted = False, created_at__gte = datetime.now() - timedelta(days=7))
+        
+        demandes_validees = demandes_semaine.filter(is_valided = True)
+        demandes_ignorees = demandes_semaine.exclude(is_valided = True)
+        
         produits = Produit.objects.filter(deleted = False, type = TypeProduit.objects.get(etiquette = TypeProduit.MEDICAMENT))
+                
+        # Obtenir la date actuelle
+        # Initialiser un dictionnaire pour stocker le total des ventes par mois
+        demandes_par_mois = {}
+        validees_par_mois = {}
+
+        # Parcourir les ventes et agréger par mois
+        for demande in demandes.order_by('created_at'):
+            date_demande = datetime.strptime(str(demande.created_at.date()), "%Y-%m-%d")
+            mois_demande = date_demande.strftime("%Y-%m")  # Nom du mois en français
+            try:
+                demandes_par_mois[mois_demande] += 1
+                validees_par_mois[mois_demande] += 1 if demande.is_valided else 0
+            except KeyError:
+                demandes_par_mois[mois_demande] = 0
+                validees_par_mois[mois_demande] = 0
+
+
         ctx = {
             "officine": officine,
             "produits": produits,
-            "officinedemandes": demandes,
+            "officinedemandes": demandes.filter(created_at__gte = datetime.now() - timedelta(days=1), is_valided = None).order_by('-created_at'),
             "demandes_semaine": demandes_semaine,
+            "demandes_validees": demandes_validees,
+            "demandes_ignorees": demandes_ignorees,
+            "demandes_par_mois": demandes_par_mois,
+            "validees_par_mois": validees_par_mois,
         }
+        
+        for dem in officine.officine_demande.filter(created_at__lte = datetime.now() - timedelta(days=1), is_valided = None):
+            dem.is_valided = False
+            dem.save()
+            
         return ctx
           
         

@@ -206,7 +206,7 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 22,
     'DEFAULT_PRECISION': 6,
-    'ATTRIBUTION_PREFIX': 'IPI ¶ Ici, les Pharmacies Ivoiriennes',
+    'ATTRIBUTION_PREFIX': 'iPi ¶ Ici, les Pharmacies Ivoiriennes',
     'MINIMAP': True,
 }
 
@@ -218,9 +218,11 @@ GRAPHENE = {
     ]
 }
 
+CRONTAB_DJANGO_PROJECT_NAME = "ipi_crons"
 CRONJOBS = [
     # ('0 10 * * 5', 'officineApp.cron.create_garde', f'>> {os.path.join(BASE_DIR, "/logs/garde.log")}'),
     ('*/10 * * * *', 'officineApp.cron.create_garde', '>> {}'.format(os.path.join(BASE_DIR, "logs/create_garde.log"))),
     ('*/1 * * * *', 'officineApp.cron.propagation_demande', '>> {}'.format(os.path.join(BASE_DIR, "logs/propagation_demande.log"))),
+    ('*/4 * * * *', 'produitApp.cron.produits_list', '>> {}'.format(os.path.join(BASE_DIR, "logs/produits_list.log"))),
 ]
 

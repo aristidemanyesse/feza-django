@@ -32,10 +32,11 @@
                         <thead>
                             <tr class="text-uppercase">
                                 <th>Fait le</th>
+                                <th>Utilisateur</th>
                                 <th>Médicaments</th>
                                 <th>ordonnance</th>
-                                <th>Distance</th>
                                 <th>Etat</th>
+                                <th>Satisfait ?</th>
                                 <th>Validée le</th>
                             </tr>
                         </thead>
@@ -43,23 +44,29 @@
                             {% for item in demandes %}
                                 <tr class="odd gradeX">
                                     <td>{{ item.created_at }}</td>
-                                    <td>{{item.demande.demande_lignes.filter.count}} médicaments</td>
-                                   
+                                    <td>{{ item.utilisateur }}</td>
+                                    <td>{{item.demande_lignes.filter.count}} médicaments</td>
                                     <td>
-                                        {% if item.demande.ordonnance %}
-                                        <a href="{{ item.demande.ordonnance.url }}" data-lightbox="gallery-group-3">
-                                            <img src="{{item.demande.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
+                                        {% if item.ordonnance %}
+                                        <a href="{{ item.ordonnance.url }}" data-lightbox="gallery-group-3">
+                                            <img src="{{item.ordonnance.url }}" style="width: 30px"  alt="ordonnance" />
                                         </a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ item.distance }}</td>
                                     <td>
-                                        {% if item.propagated and item.is_valided == False %}
+                                        {% if not item.propagated %}
+                                            <label class="label label-warning">En attente</label>
+                                        {% elif item.propagated and not item.is_valided %}
                                             <label class="label label-danger">Expiréé</label>
                                         {% elif item.propagated and item.is_valided %}
                                             <label class="label label-success">Validée</label>
+                                        {% endif %}  
+                                    </td>
+                                    <td>
+                                        {% if item.is_satisfied %}
+                                            <label class="label label-success">Oui</label>
                                         {% else %}
-                                            <label class="label label-warning">En attente</label>
+                                            <label class="label label-default">?</label>
                                         {% endif %}  
                                     </td>
                                     <td>
