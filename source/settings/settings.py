@@ -120,10 +120,10 @@ DATABASES = {
     
     'default': {
         'ENGINE'    : 'django.contrib.gis.db.backends.mysql',
-        'HOST'      : os.getenv("DB_HOST", "192.162.71.45"),
+        'HOST'      : os.getenv("DB_HOST", "0.0.0.0"),
         'PORT'      : os.getenv("DB_PORT", 3306),
         'USER'      : os.getenv("DB_USER", "root"),
-        'PASSWORD'  : os.getenv("DB_PASSWORD", "1sd48ds5ds45"),
+        'PASSWORD'  : os.getenv("DB_PASSWORD", "12345678"),
         'NAME'      : os.getenv("DB_NAME", "ipi"),
     },
     

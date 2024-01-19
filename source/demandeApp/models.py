@@ -52,10 +52,10 @@ class LigneDemande(BaseModel):
 
 
 class Reponse(BaseModel):
-    demande      = models.ForeignKey(OfficineDemande, on_delete = models.CASCADE, related_name="demande_reponse")
+    demande       = models.ForeignKey(OfficineDemande, on_delete = models.CASCADE, related_name="demande_reponse")
     commentaire   = models.TextField(default = "", null=True, blank=True)
-    price     = models.IntegerField(default= 0)
-    read        = models.BooleanField(default= False)
+    price         = models.IntegerField(default= 0)
+    read          = models.BooleanField(default= False)
         
     def __str__(self):
         return "Reponse pour " + str(self.id)

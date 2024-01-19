@@ -1,4 +1,6 @@
+import base64
 import random
+import uuid
 from django.contrib.gis.db import models
 from coreApp.models import BaseModel
 # Create your models here.
@@ -7,6 +9,8 @@ from django.contrib.gis.geos import Point, Polygon
 from annoying.decorators import signals
 import osm2geojson
 import json
+from django.core.files.base import ContentFile
+
 
 class TypeOfficine(BaseModel):
     PHARMACIE   = "PHARMACIE"
@@ -38,7 +42,8 @@ class Officine(BaseModel):
     contact         = models.CharField(max_length=255, null=True, blank=True)
     contact2        = models.CharField(max_length=255, null=True, blank=True)
     type            = models.ForeignKey(TypeOfficine, null = True, blank = True, on_delete= models.CASCADE, related_name="type_officine")
-    circonscription = models.ForeignKey(Circonscription, null = True, blank = True, on_delete= models.CASCADE, related_name="circonscription_officine")
+    circonscription = models.ForeignKey(Circonscription, null = True, blank = True, on_delete= models.SET_NULL, related_name="circonscription_officine")
+    base64          = models.TextField(default="", null=True, blank=True)
     image           = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
     image2          = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
     image3          = models.ImageField(max_length = 255, upload_to = "media/images/officines/", default="", null = True, blank=True)
@@ -80,9 +85,14 @@ class OfficineDeGarde(BaseModel):
 
 @signals.pre_save(sender=Officine)
 def sighandler(instance, **kwargs):
-    if instance.geometry is None:
-        instance.geometry = Point(instance.lat, instance.lon)
-        instance.geometry_json = instance.geometry.geojson
+    instance.geometry = Point(instance.lat, instance.lon)
+    instance.geometry_json = instance.geometry.geojson
+        
+    if instance.base64 != "":
+        header, encoding_string = instance.base64.split(",", 1)
+        ext = header.split('/')[-1]
+        img_bytes = base64.b64decode(encoding_string)
+        instance.image = ContentFile(base64.b64decode(encoding_string), name=f'{uuid.uuid4()}.png')
 
 
 @signals.post_save(sender=Officine)
